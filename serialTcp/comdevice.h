@@ -19,6 +19,9 @@ public:
 	~ComDevice();
 
 private:
+	Q_DISABLE_COPY(ComDevice)
+
+private:
 	
 };
 
@@ -34,6 +37,9 @@ public:
 
 public slots:
 	void init();
+
+private:
+	Q_DISABLE_COPY(ComDeviceSerial)
 
 private:
 	const QString _serialPort;
@@ -52,6 +58,9 @@ public:
 
 public slots:
 	void init();
+
+private:
+	Q_DISABLE_COPY(ComDeviceTcp)
 
 private:
 	const QString _localIp;

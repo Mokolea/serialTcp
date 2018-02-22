@@ -29,6 +29,12 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Header Files\3rd Party">
+      <UniqueIdentifier>{e4bd79fb-639d-4d1c-b924-46bbab522e66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rd Party">
+      <UniqueIdentifier>{d1a3f8ed-bd9c-498b-98f4-2144821cfcfe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -52,6 +58,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_comdevice.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_simpleQtLogger.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_simpleQtLogger.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SimpleQtLogger\Files\Sources\simpleQtLogger.cpp">
+      <Filter>Source Files\3rd Party</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="task.h">
@@ -59,6 +74,9 @@
     </CustomBuild>
     <CustomBuild Include="comdevice.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\SimpleQtLogger\Files\Sources\simpleQtLogger.h">
+      <Filter>Header Files\3rd Party</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

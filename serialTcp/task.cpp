@@ -6,6 +6,7 @@
 */
 
 #include "task.h"
+#include <simpleQtLogger.h>
 #include <QtCore/QTimer>
 
 Task::Task(const QString& serialPort, const QString& localIp, const QString& localPort, QObject *parent)
@@ -15,14 +16,18 @@ Task::Task(const QString& serialPort, const QString& localIp, const QString& loc
 	, _localPort(localPort)
 	, _comDevice_1(0)
 	, _comDevice_2(0)
-{}
+{
+	L_FUNC("");
+}
 
 Task::~Task()
-{}
+{
+	L_FUNC("");
+}
 
 void Task::init()
 {
-	qDebug("Task::init");
+	L_FUNC("");
 
 	_comDevice_1 = new ComDeviceSerial(_serialPort, this);
 	_comDevice_2 = new ComDeviceTcp(_localIp, _localPort, this);
@@ -35,4 +40,7 @@ void Task::init()
 
 	QTimer::singleShot(0, _comDevice_1, SLOT(init()));
 	QTimer::singleShot(0, _comDevice_2, SLOT(init()));
+
+	_sleep(1000);
+	emit finished();
 }

@@ -26,6 +26,9 @@ signals:
 	void finished(); // TODO
 
 private:
+	Q_DISABLE_COPY(Task)
+
+private:
 	const QString _serialPort;
 	const QString _localIp;
 	const QString _localPort;
