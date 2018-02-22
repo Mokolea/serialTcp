@@ -16,26 +16,28 @@ class Task : public QObject
 	Q_OBJECT
 
 public:
-	Task(const QString& serialPort, const QString& localIp, const QString& localPort, QObject *parent = 0);
+	Task(const QString& serialPortName, const QString& localIp, const QString& localPort, QObject *parent = 0);
 	~Task();
 
 public slots:
 	void init();
 
 signals:
-	void finished(); // TODO
+	void finished();
 
 private:
 	Q_DISABLE_COPY(Task)
 
+private slots:
+	void slotFinished();
+
 private:
-	const QString _serialPort;
+	const QString _serialPortName;
 	const QString _localIp;
 	const QString _localPort;
 
 	ComDevice* _comDevice_1;
 	ComDevice* _comDevice_2;
-
 };
 
 #endif // TASK_H

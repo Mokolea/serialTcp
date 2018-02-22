@@ -9,6 +9,10 @@
 #define COMDEVICE_H
 
 #include <QObject>
+#include <QByteArray>
+#include <QSerialPort>
+#include <QTcpServer>
+#include <QTcpSocket>
 
 class ComDevice : public QObject
 {
@@ -16,7 +20,15 @@ class ComDevice : public QObject
 
 public:
 	ComDevice(QObject *parent);
-	~ComDevice();
+	virtual ~ComDevice();
+
+public slots:
+	virtual void init();
+	virtual void slotDataSend(const QByteArray& data);
+
+signals:
+	void finished();
+	void signalDataRecv(const QByteArray& data);
 
 private:
 	Q_DISABLE_COPY(ComDevice)
@@ -32,18 +44,23 @@ class ComDeviceSerial : public ComDevice
 	Q_OBJECT
 
 public:
-	ComDeviceSerial(const QString& serialPort, QObject *parent);
-	~ComDeviceSerial();
+	ComDeviceSerial(const QString& serialPortName, QObject *parent);
+	virtual ~ComDeviceSerial();
 
 public slots:
-	void init();
+	virtual void init();
+	virtual void slotDataSend(const QByteArray& data);
+
+	void slotReadyRead();
+	void slotError(QSerialPort::SerialPortError error);
 
 private:
 	Q_DISABLE_COPY(ComDeviceSerial)
 
 private:
-	const QString _serialPort;
+	const QString _serialPortName;
 
+	QSerialPort* _serialPort;
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -54,10 +71,15 @@ class ComDeviceTcp : public ComDevice
 
 public:
 	ComDeviceTcp(const QString& localIp, const QString& localPort, QObject *parent);
-	~ComDeviceTcp();
+	virtual ~ComDeviceTcp();
 
 public slots:
-	void init();
+	virtual void init();
+	virtual void slotDataSend(const QByteArray& data);
+
+	void slotNewConnection();
+	void slotDisconnected();
+	void slotReadyRead();
 
 private:
 	Q_DISABLE_COPY(ComDeviceTcp)
@@ -66,6 +88,8 @@ private:
 	const QString _localIp;
 	const QString _localPort;
 
+	QTcpServer* _tcpServer;
+	QList<QTcpSocket*> _tcpSocketList;
 };
 
 #endif // COMDEVICE_H
