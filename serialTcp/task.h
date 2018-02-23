@@ -36,8 +36,8 @@ private:
 	const QString _localIp;
 	const QString _localPort;
 
-	ComDevice* _comDevice_1;
-	ComDevice* _comDevice_2;
+	ComDevice* _comDeviceSerial;
+	ComDevice* _comDeviceTcp;
 };
 
 #endif // TASK_H

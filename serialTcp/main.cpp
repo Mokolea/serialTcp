@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
 	// set log-features
 	simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
 	simpleqtlogger::ENABLE_CONSOLE_COLOR = false;
+	simpleqtlogger::ENABLE_CONSOLE_TRIMMED = false;
 	// set log-levels (global; all enabled)
 	simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_FATAL = true;
 	simpleqtlogger::ENABLE_LOG_LEVELS.logLevel_ERROR = true;
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
 	L_INFO(QString("%1 v%2").arg(a.arguments().at(0)).arg(TOOL_VERSION));
 
 	if (argc < 4) {
-		L_INFO(QString(
+		L_INFO(QString("\n"
 			"ERROR: missing command-line parameter\n\n"
 			"Usage: %1 serialPort localIp localPort\n"
 			"  serialPort serial port this program is opening\n"

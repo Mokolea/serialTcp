@@ -14,8 +14,8 @@ Task::Task(const QString& serialPortName, const QString& localIp, const QString&
 	, _serialPortName(serialPortName)
 	, _localIp(localIp)
 	, _localPort(localPort)
-	, _comDevice_1(0)
-	, _comDevice_2(0)
+	, _comDeviceSerial(0)
+	, _comDeviceTcp(0)
 {
 	L_FUNC("");
 }
@@ -29,17 +29,17 @@ void Task::init()
 {
 	L_FUNC("");
 
-	_comDevice_1 = new ComDeviceSerial(_serialPortName, this);
-	_comDevice_2 = new ComDeviceTcp(_localIp, _localPort, this);
+	_comDeviceSerial = new ComDeviceSerial(_serialPortName, this);
+	_comDeviceTcp = new ComDeviceTcp(_localIp, _localPort, this);
 
-	connect(_comDevice_1, &ComDevice::finished, this, &Task::slotFinished);
-	connect(_comDevice_2, &ComDevice::finished, this, &Task::slotFinished);
+	connect(_comDeviceSerial, &ComDevice::finished, this, &Task::slotFinished);
+	connect(_comDeviceTcp, &ComDevice::finished, this, &Task::slotFinished);
 
-	connect(_comDevice_1, &ComDevice::signalDataRecv, _comDevice_2, &ComDevice::slotDataSend);
-	connect(_comDevice_2, &ComDevice::signalDataRecv, _comDevice_1, &ComDevice::slotDataSend);
+	connect(_comDeviceSerial, &ComDevice::signalDataRecv, _comDeviceTcp, &ComDevice::slotDataSend);
+	connect(_comDeviceTcp, &ComDevice::signalDataRecv, _comDeviceSerial, &ComDevice::slotDataSend);
 
-	QTimer::singleShot(0, _comDevice_1, SLOT(init()));
-	QTimer::singleShot(0, _comDevice_2, SLOT(init()));
+	QTimer::singleShot(0, _comDeviceSerial, SLOT(init()));
+	QTimer::singleShot(0, _comDeviceTcp, SLOT(init()));
 }
 
 void Task::slotFinished()

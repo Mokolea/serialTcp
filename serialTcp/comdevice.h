@@ -77,6 +77,7 @@ public slots:
 	virtual void init();
 	virtual void slotDataSend(const QByteArray& data);
 
+	void slotAcceptError(QAbstractSocket::SocketError socketError);
 	void slotNewConnection();
 	void slotDisconnected();
 	void slotReadyRead();

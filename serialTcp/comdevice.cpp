@@ -44,6 +44,7 @@ ComDeviceSerial::~ComDeviceSerial()
 	L_FUNC("");
 	if (_serialPort) {
 		_serialPort->close();
+		L_NOTE("Serial port closed");
 	}
 }
 
@@ -72,7 +73,7 @@ void ComDeviceSerial::slotDataSend(const QByteArray& data)
 	}
 
 	qint64 number = _serialPort->write(data);
-	if(number = -1) {
+	if(number == -1) {
 		L_ERROR("Serial port write failed");
 		emit finished();
 	}
@@ -118,7 +119,12 @@ ComDeviceTcp::~ComDeviceTcp()
 {
 	L_FUNC("");
 	if (_tcpServer) {
+		foreach(QTcpSocket* tcpSocket, _tcpSocketList) {
+			tcpSocket->disconnectFromHost();
+			L_NOTE("TCP-Socket closed");
+		}
 		_tcpServer->close();
+		L_NOTE("TCP-Server closed");
 	}
 }
 
@@ -128,10 +134,11 @@ void ComDeviceTcp::init()
 
 	_tcpServer = new QTcpServer(this);
 
+	connect(_tcpServer, &QTcpServer::acceptError, this, &ComDeviceTcp::slotAcceptError);
 	connect(_tcpServer, &QTcpServer::newConnection, this, &ComDeviceTcp::slotNewConnection);
 
 	if (!_tcpServer->listen(QHostAddress::Any, _localPort.toUShort())) {
-		L_ERROR("TCP Server listen failed");
+		L_ERROR("TCP-Server listen failed");
 		emit finished();
 	}
 }
@@ -145,15 +152,22 @@ void ComDeviceTcp::slotDataSend(const QByteArray& data)
 
 	foreach(QTcpSocket* tcpSocket, _tcpSocketList) {
 		qint64 number = tcpSocket->write(data);
-		if (number = -1) {
-			L_ERROR("TCP Socket write failed");
+		if (number == -1) {
+			L_ERROR("TCP-Socket write failed");
 			emit finished();
 		}
 		else if (number != data.size()) {
-			L_WARN("TCP Socket write partial data");
+			L_WARN("TCP-Socket write partial data");
 			emit finished();
 		}
 	}
+}
+
+void ComDeviceTcp::slotAcceptError(QAbstractSocket::SocketError socketError)
+{
+	L_FUNC("");
+	L_ERROR(QString("TCP-Server accept error: %1").arg(socketError));
+	emit finished();
 }
 
 void ComDeviceTcp::slotNewConnection()
@@ -172,6 +186,8 @@ void ComDeviceTcp::slotNewConnection()
 	connect(tcpSocket, &QIODevice::readyRead, this, &ComDeviceTcp::slotReadyRead);
 
 	_tcpSocketList << tcpSocket;
+
+	L_NOTE("TCP-Socket connected");
 }
 
 void ComDeviceTcp::slotDisconnected()
