@@ -13,6 +13,8 @@
 #include <QSerialPort>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QSocketNotifier>
+#include <QFile>
 
 class ComDevice : public QObject
 {
@@ -91,6 +93,33 @@ private:
 
 	QTcpServer* _tcpServer;
 	QList<QTcpSocket*> _tcpSocketList;
+};
+
+// -------------------------------------------------------------------------------------------------
+
+class ComDeviceScreen : public ComDevice
+{
+	Q_OBJECT
+
+public:
+	ComDeviceScreen(QObject *parent);
+	virtual ~ComDeviceScreen();
+
+public slots:
+	virtual void init();
+	virtual void slotDataSend(const QByteArray& data);
+
+	void slotReadyRead();
+	void slotActivated(int socket);
+
+private:
+	Q_DISABLE_COPY(ComDeviceScreen)
+
+private:
+	QTextStream* _textStreamIn;
+	QTextStream* _textStreamOut;
+	QSocketNotifier* _socketNotifierIn;
+	QFile* _fileIn;
 };
 
 #endif // COMDEVICE_H

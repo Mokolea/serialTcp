@@ -7,7 +7,7 @@
 
 #include "task.h"
 #include <simpleQtLogger.h>
-#include <QtCore/QTimer>
+#include <QTimer>
 
 Task::Task(const QString& serialPortName, const QString& localIp, const QString& localPort, QObject *parent)
 	: QObject(parent)
@@ -16,6 +16,7 @@ Task::Task(const QString& serialPortName, const QString& localIp, const QString&
 	, _localPort(localPort)
 	, _comDeviceSerial(0)
 	, _comDeviceTcp(0)
+	, _comDeviceScreen(0)
 {
 	L_FUNC("");
 }
@@ -31,15 +32,20 @@ void Task::init()
 
 	_comDeviceSerial = new ComDeviceSerial(_serialPortName, this);
 	_comDeviceTcp = new ComDeviceTcp(_localIp, _localPort, this);
+	_comDeviceScreen = new ComDeviceScreen(this);
 
 	connect(_comDeviceSerial, &ComDevice::finished, this, &Task::slotFinished);
 	connect(_comDeviceTcp, &ComDevice::finished, this, &Task::slotFinished);
+	connect(_comDeviceScreen, &ComDevice::finished, this, &Task::slotFinished);
 
 	connect(_comDeviceSerial, &ComDevice::signalDataRecv, _comDeviceTcp, &ComDevice::slotDataSend);
+	connect(_comDeviceSerial, &ComDevice::signalDataRecv, _comDeviceScreen, &ComDevice::slotDataSend);
 	connect(_comDeviceTcp, &ComDevice::signalDataRecv, _comDeviceSerial, &ComDevice::slotDataSend);
+	connect(_comDeviceScreen, &ComDevice::signalDataRecv, _comDeviceSerial, &ComDevice::slotDataSend);
 
 	QTimer::singleShot(0, _comDeviceSerial, SLOT(init()));
 	QTimer::singleShot(0, _comDeviceTcp, SLOT(init()));
+	QTimer::singleShot(0, _comDeviceScreen, SLOT(init()));
 }
 
 void Task::slotFinished()

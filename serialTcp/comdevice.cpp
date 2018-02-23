@@ -7,6 +7,7 @@
 
 #include "comdevice.h"
 #include <simpleQtLogger.h>
+#include <QTimer>
 
 ComDevice::ComDevice(QObject *parent)
 	: QObject(parent)
@@ -22,11 +23,13 @@ ComDevice::~ComDevice()
 void ComDevice::init()
 {
 	L_FUNC("");
+	L_FATAL("No implementation");
 }
 
 void ComDevice::slotDataSend(const QByteArray& data)
 {
 	L_FUNC("");
+	L_FATAL("No implementation");
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -54,7 +57,12 @@ void ComDeviceSerial::init()
 
 	_serialPort = new QSerialPort(this);
 	_serialPort->setPortName(_serialPortName);
-	_serialPort->setBaudRate(QSerialPort::Baud9600);
+
+	_serialPort->setBaudRate(QSerialPort::Baud57600); // Baud9600
+	_serialPort->setDataBits(QSerialPort::Data8);
+	_serialPort->setParity(QSerialPort::NoParity);
+	_serialPort->setStopBits(QSerialPort::OneStop);
+	_serialPort->setFlowControl(QSerialPort::NoFlowControl);
 
 	connect(_serialPort, &QSerialPort::readyRead, this, &ComDeviceSerial::slotReadyRead);
 	connect(_serialPort, static_cast<void(QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error), this, &ComDeviceSerial::slotError);
@@ -67,7 +75,7 @@ void ComDeviceSerial::init()
 
 void ComDeviceSerial::slotDataSend(const QByteArray& data)
 {
-	L_FUNC("");
+	// L_FUNC("");
 	if (!_serialPort) {
 		return;
 	}
@@ -85,7 +93,7 @@ void ComDeviceSerial::slotDataSend(const QByteArray& data)
 
 void ComDeviceSerial::slotReadyRead()
 {
-	L_FUNC("");
+	// L_FUNC("");
 	if (!_serialPort) {
 		return;
 	}
@@ -145,7 +153,7 @@ void ComDeviceTcp::init()
 
 void ComDeviceTcp::slotDataSend(const QByteArray& data)
 {
-	L_FUNC("");
+	// L_FUNC("");
 	if (!_tcpServer) {
 		return;
 	}
@@ -199,15 +207,142 @@ void ComDeviceTcp::slotDisconnected()
 	}
 	_tcpSocketList.removeAll(tcpSocket);
 	tcpSocket->deleteLater();
+	L_NOTE("TCP-Socket closed");
 }
 
 void ComDeviceTcp::slotReadyRead()
 {
-	L_FUNC("");
+	// L_FUNC("");
 	QTcpSocket* tcpSocket = qobject_cast<QTcpSocket*>(sender());
 	if (!tcpSocket) {
 		return;
 	}
 	QByteArray data = tcpSocket->readAll();
+	emit signalDataRecv(data);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+ComDeviceScreen::ComDeviceScreen(QObject *parent)
+	: ComDevice(parent)
+	, _textStreamIn(0)
+	, _textStreamOut(0)
+	, _socketNotifierIn(0)
+	, _fileIn(0)
+{
+	L_FUNC("");
+}
+
+ComDeviceScreen::~ComDeviceScreen()
+{
+	L_FUNC("");
+	if (_fileIn) {
+		delete _fileIn;
+	}
+	if (_socketNotifierIn) {
+		delete _socketNotifierIn;
+	}
+	if (_textStreamOut) {
+		delete _textStreamOut;
+	}
+	if (_textStreamIn) {
+		delete _textStreamIn;
+	}
+}
+
+void ComDeviceScreen::init()
+{
+	L_FUNC("");
+
+	//_textStreamIn = new QTextStream(stdin);
+	_textStreamOut = new QTextStream(stdout);
+
+	//_socketNotifierIn = new QSocketNotifier(0 /*stdin*/, QSocketNotifier::Read);
+
+	//connect(_socketNotifierIn, &QSocketNotifier::activated, this, &ComDeviceScreen::slotActivated);
+
+	_fileIn = new QFile;
+	_fileIn->open(stdin, QIODevice::ReadOnly);
+
+	connect(_fileIn, &QIODevice::readyRead, this, &ComDeviceScreen::slotReadyRead);
+
+	//QIODevice* ioDeviceIn = _textStreamIn->device();
+	//if (!ioDeviceIn) {
+	//	L_WARN("QIODevice error");
+	//	emit finished();
+	//}
+
+	//connect(ioDeviceIn, &QIODevice::readyRead, this, &ComDeviceScreen::slotReadyRead);
+
+	//QTimer::singleShot(10, this, SLOT(slotReadyRead()));
+}
+
+void ComDeviceScreen::slotDataSend(const QByteArray& data)
+{
+	// L_FUNC("");
+	if (!_textStreamOut) {
+		return;
+	}
+
+	_textStreamOut->operator<<(data);
+	_textStreamOut->flush();
+}
+
+void ComDeviceScreen::slotReadyRead()
+{
+	L_FUNC("");
+	//if (!_fileIn) {
+	//	return;
+	//}
+
+	//if (_fileIn->bytesAvailable()) {
+
+	//QByteArray data = _fileIn->readAll();
+
+	//QByteArray data = _fileIn->readLine();
+	//if (data.size()) {
+	//	emit signalDataRecv(data);
+	//}
+
+	//}
+
+	//QIODevice* ioDeviceIn = _textStreamIn->device();
+	//if (!ioDeviceIn) {
+	//	L_WARN("QIODevice error");
+	//	emit finished();
+	//}
+
+	//if (_textStreamIn->atEnd()) {
+	//	return;
+	//}
+
+	//QByteArray data = ioDeviceIn->readAll();
+
+	//qint64 number = ioDeviceIn->bytesAvailable();
+	//if (number) {
+	//	QByteArray data = ioDeviceIn->read(number);
+	//	emit signalDataRecv(data);
+	//}
+	//if (data.size()) {
+	//	emit signalDataRecv(data);
+	//}
+
+	//QTimer::singleShot(10, this, SLOT(slotReadyRead()));
+}
+
+void ComDeviceScreen::slotActivated(int socket)
+{
+	L_FUNC("");
+	if (!_textStreamIn) {
+		return;
+	}
+
+	QIODevice* ioDeviceIn = _textStreamIn->device();
+	if (!ioDeviceIn) {
+		L_WARN("QIODevice error");
+		emit finished();
+	}
+
+	QByteArray data = ioDeviceIn->readAll();
 	emit signalDataRecv(data);
 }

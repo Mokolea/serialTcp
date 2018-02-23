@@ -38,6 +38,7 @@ private:
 
 	ComDevice* _comDeviceSerial;
 	ComDevice* _comDeviceTcp;
+	ComDevice* _comDeviceScreen;
 };
 
 #endif // TASK_H
