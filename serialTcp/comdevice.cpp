@@ -145,10 +145,16 @@ void ComDeviceTcp::init()
 	connect(_tcpServer, &QTcpServer::acceptError, this, &ComDeviceTcp::slotAcceptError);
 	connect(_tcpServer, &QTcpServer::newConnection, this, &ComDeviceTcp::slotNewConnection);
 
-	if (!_tcpServer->listen(QHostAddress::Any, _localPort.toUShort())) {
+	QHostAddress hostAddress = _localIp.compare("any", Qt::CaseInsensitive) == 0 ? QHostAddress::Any : QHostAddress(_localIp);
+	if (!_tcpServer->listen(hostAddress, _localPort.toUShort())) {
 		L_ERROR("TCP-Server listen failed");
 		emit finished();
 	}
+	if (hostAddress.isNull()) {
+		L_ERROR("TCP-Server listen address error");
+		emit finished();
+	}
+	L_NOTE(QString("TCP-Server listening: %1").arg(hostAddress.toString()));
 }
 
 void ComDeviceTcp::slotDataSend(const QByteArray& data)
@@ -261,10 +267,10 @@ void ComDeviceScreen::init()
 
 	//connect(_socketNotifierIn, &QSocketNotifier::activated, this, &ComDeviceScreen::slotActivated);
 
-	_fileIn = new QFile;
-	_fileIn->open(stdin, QIODevice::ReadOnly);
+	//_fileIn = new QFile;
+	//_fileIn->open(stdin, QIODevice::ReadOnly);
 
-	connect(_fileIn, &QIODevice::readyRead, this, &ComDeviceScreen::slotReadyRead);
+	//connect(_fileIn, &QIODevice::readyRead, this, &ComDeviceScreen::slotReadyRead);
 
 	//QIODevice* ioDeviceIn = _textStreamIn->device();
 	//if (!ioDeviceIn) {
@@ -333,16 +339,17 @@ void ComDeviceScreen::slotReadyRead()
 void ComDeviceScreen::slotActivated(int socket)
 {
 	L_FUNC("");
-	if (!_textStreamIn) {
-		return;
-	}
+	//if (!_textStreamIn) {
+	//	return;
+	//}
 
-	QIODevice* ioDeviceIn = _textStreamIn->device();
-	if (!ioDeviceIn) {
-		L_WARN("QIODevice error");
-		emit finished();
-	}
+	//QIODevice* ioDeviceIn = _textStreamIn->device();
+	//if (!ioDeviceIn) {
+	//	L_WARN("QIODevice error");
+	//	emit finished();
+	//}
 
-	QByteArray data = ioDeviceIn->readAll();
-	emit signalDataRecv(data);
+	//QByteArray data = ioDeviceIn->readAll();
+	//QByteArray data = QByteArray::fromStdString(_textStreamIn->readLine().toStdString());
+	//emit signalDataRecv(data);
 }

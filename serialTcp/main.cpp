@@ -50,12 +50,14 @@ int main(int argc, char *argv[])
 
 	L_INFO(QString("%1 v%2").arg(a.arguments().at(0)).arg(TOOL_VERSION));
 
+	// TODO use QCommandLineParser
+
 	if (argc < 4) {
 		L_INFO(QString("\n"
 			"ERROR: missing command-line parameter\n\n"
 			"Usage: %1 serialPort localIp localPort\n"
 			"  serialPort serial port this program is opening\n"
-			"  localIp IP-address this program is binding to\n"
+			"  localIp IP-address this program is binding to, 'any' for any interface\n"
 			"  localPort port used by this program, listening\n\n"
 			"Serial ports:"
 		).arg(a.arguments().at(0)));
