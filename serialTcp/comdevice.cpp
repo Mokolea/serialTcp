@@ -154,7 +154,7 @@ void ComDeviceTcp::init()
 		L_ERROR("TCP-Server listen address error");
 		emit finished();
 	}
-	L_NOTE(QString("TCP-Server listening: %1").arg(hostAddress.toString()));
+	L_NOTE(QString("TCP-Server listening: %1 %2").arg(hostAddress.toString()).arg(_localPort));
 }
 
 void ComDeviceTcp::slotDataSend(const QByteArray& data)
