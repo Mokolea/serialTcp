@@ -64,7 +64,7 @@
     <ClCompile Include="GeneratedFiles\Release\moc_simpleQtLogger.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\SimpleQtLogger\Files\Sources\simpleQtLogger.cpp">
+    <ClCompile Include="..\..\SimpleQtLogger\simpleQtLogger.cpp">
       <Filter>Source Files\3rd Party</Filter>
     </ClCompile>
   </ItemGroup>
@@ -75,7 +75,7 @@
     <CustomBuild Include="comdevice.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\SimpleQtLogger\Files\Sources\simpleQtLogger.h">
+    <CustomBuild Include="..\..\SimpleQtLogger\simpleQtLogger.h">
       <Filter>Header Files\3rd Party</Filter>
     </CustomBuild>
   </ItemGroup>
