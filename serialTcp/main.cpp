@@ -52,11 +52,12 @@ int main(int argc, char *argv[])
 
 	// TODO use QCommandLineParser
 
-	if (argc < 4) {
+	if (argc < 5) {
 		L_INFO(QString("\n"
 			"ERROR: missing command-line parameter\n\n"
-			"Usage: %1 serialPort localIp localPort\n"
+			"Usage: %1 serialPort serialBaud localIp localPort\n"
 			"  serialPort serial port this program is opening\n"
+			"  serialBaud data baud rate for serial port\n"
 			"  localIp IP-address this program is binding to, 'any' for any interface\n"
 			"  localPort port used by this program, listening\n\n"
 			"Serial ports:"
@@ -68,8 +69,8 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	// Task *task = new Task(a.arguments().at(1), a.arguments().at(2), a.arguments().at(3), &a); // problem: children of task are deleted after SimpleQtLogger !!!
-	Task task(a.arguments().at(1), a.arguments().at(2), a.arguments().at(3), &a);
+	// Task *task = new Task(a.arguments().at(1), a.arguments().at(2), a.arguments().at(3), a.arguments().at(4), &a); // problem: children of task are deleted after SimpleQtLogger !!!
+	Task task(a.arguments().at(1), a.arguments().at(2), a.arguments().at(3), a.arguments().at(4), &a);
 	QObject::connect(&task, SIGNAL(finished()), &a, SLOT(quit()));
 	QTimer::singleShot(0, &task, SLOT(init()));
 

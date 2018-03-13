@@ -34,9 +34,10 @@ void ComDevice::slotDataSend(const QByteArray& data)
 
 // -------------------------------------------------------------------------------------------------
 
-ComDeviceSerial::ComDeviceSerial(const QString& serialPortName, QObject *parent)
+ComDeviceSerial::ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject *parent)
 	: ComDevice(parent)
 	, _serialPortName(serialPortName)
+	, _serialBaudRate(serialBaudRate)
 	, _serialPort(0)
 {
 	L_FUNC("");
@@ -58,7 +59,24 @@ void ComDeviceSerial::init()
 	_serialPort = new QSerialPort(this);
 	_serialPort->setPortName(_serialPortName);
 
-	_serialPort->setBaudRate(QSerialPort::Baud57600); // Baud9600
+	if (_serialBaudRate == "4800") {
+		_serialPort->setBaudRate(QSerialPort::Baud4800);
+	}
+	else if (_serialBaudRate == "9600") {
+		_serialPort->setBaudRate(QSerialPort::Baud9600);
+	}
+	else if (_serialBaudRate == "19200") {
+		_serialPort->setBaudRate(QSerialPort::Baud19200);
+	}
+	else if (_serialBaudRate == "38400") {
+		_serialPort->setBaudRate(QSerialPort::Baud38400);
+	}
+	else if (_serialBaudRate == "57600") {
+		_serialPort->setBaudRate(QSerialPort::Baud57600);
+	}
+	else {
+		_serialPort->setBaudRate(QSerialPort::Baud115200);
+	}
 	_serialPort->setDataBits(QSerialPort::Data8);
 	_serialPort->setParity(QSerialPort::NoParity);
 	_serialPort->setStopBits(QSerialPort::OneStop);

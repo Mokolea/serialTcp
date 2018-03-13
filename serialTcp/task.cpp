@@ -9,9 +9,10 @@
 #include <simpleQtLogger.h>
 #include <QTimer>
 
-Task::Task(const QString& serialPortName, const QString& localIp, const QString& localPort, QObject *parent)
+Task::Task(const QString& serialPortName, const QString& serialBaudRate, const QString& localIp, const QString& localPort, QObject *parent)
 	: QObject(parent)
 	, _serialPortName(serialPortName)
+	, _serialBaudRate(serialBaudRate)
 	, _localIp(localIp)
 	, _localPort(localPort)
 	, _comDeviceSerial(0)
@@ -30,7 +31,7 @@ void Task::init()
 {
 	L_FUNC("");
 
-	_comDeviceSerial = new ComDeviceSerial(_serialPortName, this);
+	_comDeviceSerial = new ComDeviceSerial(_serialPortName, _serialBaudRate, this);
 	_comDeviceTcp = new ComDeviceTcp(_localIp, _localPort, this);
 	_comDeviceScreen = new ComDeviceScreen(this);
 
