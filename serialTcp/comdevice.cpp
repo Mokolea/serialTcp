@@ -231,7 +231,7 @@ void ComDeviceTcp::slotDisconnected()
 	}
 	_tcpSocketList.removeAll(tcpSocket);
 	tcpSocket->deleteLater();
-	L_NOTE("TCP-Socket closed");
+	L_NOTE(QString("TCP-Socket closed: %1 %2").arg(tcpSocket->peerAddress().toString()).arg(tcpSocket->peerPort()));
 }
 
 void ComDeviceTcp::slotReadyRead()
