@@ -9,12 +9,14 @@
 #include <simpleQtLogger.h>
 #include <QTimer>
 
-Task::Task(const QString& serialPortName, const QString& serialBaudRate, const QString& localIp, const QString& localPort, QObject *parent)
+Task::Task(const QString& serialPortName, const QString& serialBaudRate, const QString& localIp, const QString& localPort, bool localInput, bool localOutput, QObject *parent)
 	: QObject(parent)
 	, _serialPortName(serialPortName)
 	, _serialBaudRate(serialBaudRate)
 	, _localIp(localIp)
 	, _localPort(localPort)
+	, _localInput(localInput)
+	, _localOutput(localOutput)
 	, _comDeviceSerial(0)
 	, _comDeviceTcp(0)
 	, _comDeviceScreen(0)
@@ -40,9 +42,13 @@ void Task::init()
 	connect(_comDeviceScreen, &ComDevice::finished, this, &Task::slotFinished);
 
 	connect(_comDeviceSerial, &ComDevice::signalDataRecv, _comDeviceTcp, &ComDevice::slotDataSend);
-	connect(_comDeviceSerial, &ComDevice::signalDataRecv, _comDeviceScreen, &ComDevice::slotDataSend);
 	connect(_comDeviceTcp, &ComDevice::signalDataRecv, _comDeviceSerial, &ComDevice::slotDataSend);
-	connect(_comDeviceScreen, &ComDevice::signalDataRecv, _comDeviceSerial, &ComDevice::slotDataSend);
+	if (_localOutput) {
+		connect(_comDeviceSerial, &ComDevice::signalDataRecv, _comDeviceScreen, &ComDevice::slotDataSend);
+	}
+	if (_localInput) {
+		connect(_comDeviceScreen, &ComDevice::signalDataRecv, _comDeviceSerial, &ComDevice::slotDataSend);
+	}
 
 	QTimer::singleShot(0, _comDeviceSerial, SLOT(init()));
 	QTimer::singleShot(0, _comDeviceTcp, SLOT(init()));

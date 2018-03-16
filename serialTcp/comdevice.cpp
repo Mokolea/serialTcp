@@ -219,7 +219,7 @@ void ComDeviceTcp::slotNewConnection()
 
 	_tcpSocketList << tcpSocket;
 
-	L_NOTE("TCP-Socket connected");
+	L_NOTE(QString("TCP-Socket connected: %1 %2").arg(tcpSocket->peerAddress().toString()).arg(tcpSocket->peerPort()));
 }
 
 void ComDeviceTcp::slotDisconnected()
