@@ -6,7 +6,7 @@ Serial - TCP
 [![License](https://img.shields.io/github/license/Mokolea/serialTcp.svg)](LICENSE)
 
 # TODO
-
+ - Support local input
 
 
 *MIT License*
