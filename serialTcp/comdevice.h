@@ -46,7 +46,7 @@ class ComDeviceSerial : public ComDevice
 	Q_OBJECT
 
 public:
-	ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject *parent);
+	explicit ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject *parent);
 	virtual ~ComDeviceSerial();
 
 public slots:

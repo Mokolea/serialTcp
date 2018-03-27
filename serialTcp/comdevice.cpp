@@ -30,6 +30,7 @@ void ComDevice::slotDataSend(const QByteArray& data)
 {
 	L_FUNC("");
 	L_FATAL("No implementation");
+	Q_UNUSED(data);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -360,6 +361,8 @@ void ComDeviceScreen::slotActivated(int socket)
 	//if (!_textStreamIn) {
 	//	return;
 	//}
+
+	Q_UNUSED(socket);
 
 	//QIODevice* ioDeviceIn = _textStreamIn->device();
 	//if (!ioDeviceIn) {

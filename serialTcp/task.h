@@ -16,7 +16,7 @@ class Task : public QObject
 	Q_OBJECT
 
 public:
-	Task(const QString& serialPortName, const QString& serialBaudRate, const QString& localIp, const QString& localPort, bool localInput, bool localOutput, QObject *parent = 0);
+	explicit Task(const QString& serialPortName, const QString& serialBaudRate, const QString& localIp, const QString& localPort, bool localInput, bool localOutput, QObject *parent = 0);
 	~Task();
 
 public slots:
