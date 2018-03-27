@@ -16,7 +16,9 @@ TEMPLATE = app
 
 SOURCES += \
     serialTcp/main.cpp \
-    serialTcp/task.cpp
+    serialTcp/task.cpp \
+    SimpleQtLogger/simpleQtLogger.cpp
 
 HEADERS += \
-    serialTcp/task.h
+    serialTcp/task.h \
+    SimpleQtLogger/simpleQtLogger.h
