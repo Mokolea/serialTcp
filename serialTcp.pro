@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core
+QT += core serialport network
 QT -= gui
 
 TARGET = serialTcp
@@ -14,11 +14,15 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
+INCLUDEPATH += SimpleQtLogger
+
 SOURCES += \
     serialTcp/main.cpp \
     serialTcp/task.cpp \
+    serialTcp/comdevice.cpp \
     SimpleQtLogger/simpleQtLogger.cpp
 
 HEADERS += \
     serialTcp/task.h \
+    serialTcp/comdevice.h \
     SimpleQtLogger/simpleQtLogger.h
