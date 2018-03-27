@@ -7,4 +7,8 @@ Serial - TCP
 
 # TODO
 
+
+
+*MIT License*
+
 -- Mario
