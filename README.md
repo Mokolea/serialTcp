@@ -12,7 +12,7 @@ Usage:
 ```
 $ ./serialTcp --help
 Current log-file: "serialTcp.log" role "main"
-Usage: ./build-serialTcp-Qt5-Debug/serialTcp [options] serialPort serialBaud localIp localPort
+Usage: ./serialTcp [options] serialPort serialBaud localIp localPort
 Open serial port and connect to all active TCP streams.
 
 Options:
