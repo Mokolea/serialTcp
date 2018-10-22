@@ -77,7 +77,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\SimpleQtLogger\simpleQtLogger.cpp" />
-    <ClCompile Include="comdevice.cpp" />
+    <ClCompile Include="..\serialTcp\comdevice.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_comdevice.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -96,11 +96,11 @@
     <ClCompile Include="GeneratedFiles\Release\moc_task.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="task.cpp" />
+    <ClCompile Include="..\serialTcp\main.cpp" />
+    <ClCompile Include="..\serialTcp\task.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="task.h">
+    <CustomBuild Include="..\serialTcp\task.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing task.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -112,7 +112,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="comdevice.h">
+    <CustomBuild Include="..\serialTcp\comdevice.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing comdevice.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>

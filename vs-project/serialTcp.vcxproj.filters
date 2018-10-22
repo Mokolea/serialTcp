@@ -37,10 +37,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\serialTcp\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="task.cpp">
+    <ClCompile Include="..\serialTcp\task.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_task.cpp">
@@ -49,7 +49,7 @@
     <ClCompile Include="GeneratedFiles\Release\moc_task.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="comdevice.cpp">
+    <ClCompile Include="..\serialTcp\comdevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_comdevice.cpp">
@@ -69,10 +69,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="task.h">
+    <CustomBuild Include="..\serialTcp\task.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="comdevice.h">
+    <CustomBuild Include="..\serialTcp\comdevice.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\SimpleQtLogger\simpleQtLogger.h">
