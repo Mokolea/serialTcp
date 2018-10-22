@@ -8,6 +8,12 @@ Open serial port and connect to all active TCP streams.
 ## TODO
  - Support local input
 
+## Info
+Tested on platforms:
+ - Ubuntu 16.04, 18.04 using Qt 5.7
+ - Raspberry Pi Model 3, Raspbian 9 (stretch) using Qt 5.7
+ - Windows 10, VS 2015 using Qt 5.7
+
 Usage:
 ```
 $ ./serialTcp --help
