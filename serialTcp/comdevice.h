@@ -1,7 +1,7 @@
 /*
   Serial - TCP
 
-  Mario Ban, Atos AG, 02.2018
+  Mario Ban, 2018-02
 
 */
 
@@ -18,109 +18,109 @@
 
 class ComDevice : public QObject
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	ComDevice(QObject *parent);
-	virtual ~ComDevice();
+  ComDevice(QObject *parent);
+  virtual ~ComDevice();
 
 public slots:
-	virtual void init();
-	virtual void slotDataSend(const QByteArray& data);
+  virtual void init();
+  virtual void slotDataSend(const QByteArray& data);
 
 signals:
-	void finished();
-	void signalDataRecv(const QByteArray& data);
+  void finished();
+  void signalDataRecv(const QByteArray& data);
 
 private:
-	Q_DISABLE_COPY(ComDevice)
+  Q_DISABLE_COPY(ComDevice)
 
 private:
-	
+
 };
 
 // -------------------------------------------------------------------------------------------------
 
 class ComDeviceSerial : public ComDevice
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	explicit ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject *parent);
-	virtual ~ComDeviceSerial();
+  explicit ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject *parent);
+  virtual ~ComDeviceSerial();
 
 public slots:
-	virtual void init();
-	virtual void slotDataSend(const QByteArray& data);
+  virtual void init();
+  virtual void slotDataSend(const QByteArray& data);
 
-	void slotReadyRead();
-	void slotError(QSerialPort::SerialPortError error);
-
-private:
-	Q_DISABLE_COPY(ComDeviceSerial)
+  void slotReadyRead();
+  void slotError(QSerialPort::SerialPortError error);
 
 private:
-	const QString _serialPortName;
-	const QString _serialBaudRate;
+  Q_DISABLE_COPY(ComDeviceSerial)
 
-	QSerialPort* _serialPort;
+private:
+  const QString _serialPortName;
+  const QString _serialBaudRate;
+
+  QSerialPort* _serialPort;
 };
 
 // -------------------------------------------------------------------------------------------------
 
 class ComDeviceTcp : public ComDevice
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	ComDeviceTcp(const QString& localIp, const QString& localPort, QObject *parent);
-	virtual ~ComDeviceTcp();
+  ComDeviceTcp(const QString& localIp, const QString& localPort, QObject *parent);
+  virtual ~ComDeviceTcp();
 
 public slots:
-	virtual void init();
-	virtual void slotDataSend(const QByteArray& data);
+  virtual void init();
+  virtual void slotDataSend(const QByteArray& data);
 
-	void slotAcceptError(QAbstractSocket::SocketError socketError);
-	void slotNewConnection();
-	void slotDisconnected();
-	void slotReadyRead();
-
-private:
-	Q_DISABLE_COPY(ComDeviceTcp)
+  void slotAcceptError(QAbstractSocket::SocketError socketError);
+  void slotNewConnection();
+  void slotDisconnected();
+  void slotReadyRead();
 
 private:
-	const QString _localIp;
-	const QString _localPort;
+  Q_DISABLE_COPY(ComDeviceTcp)
 
-	QTcpServer* _tcpServer;
-	QList<QTcpSocket*> _tcpSocketList;
+private:
+  const QString _localIp;
+  const QString _localPort;
+
+  QTcpServer* _tcpServer;
+  QList<QTcpSocket*> _tcpSocketList;
 };
 
 // -------------------------------------------------------------------------------------------------
 
 class ComDeviceScreen : public ComDevice
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	ComDeviceScreen(QObject *parent);
-	virtual ~ComDeviceScreen();
+  ComDeviceScreen(QObject *parent);
+  virtual ~ComDeviceScreen();
 
 public slots:
-	virtual void init();
-	virtual void slotDataSend(const QByteArray& data);
+  virtual void init();
+  virtual void slotDataSend(const QByteArray& data);
 
-	void slotReadyRead();
-	void slotActivated(int socket);
-
-private:
-	Q_DISABLE_COPY(ComDeviceScreen)
+  void slotReadyRead();
+  void slotActivated(int socket);
 
 private:
-	QTextStream* _textStreamIn;
-	QTextStream* _textStreamOut;
-	QSocketNotifier* _socketNotifierIn;
-	QFile* _fileIn;
+  Q_DISABLE_COPY(ComDeviceScreen)
+
+private:
+  QTextStream* _textStreamIn;
+  QTextStream* _textStreamOut;
+  QSocketNotifier* _socketNotifierIn;
+  QFile* _fileIn;
 };
 
 #endif // COMDEVICE_H
