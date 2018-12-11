@@ -6,7 +6,8 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 [![License](https://img.shields.io/github/license/Mokolea/serialTcp.svg)](LICENSE)
 
 ## Features
- - Open serial port and connect to all active TCP streams.
+ - Open serial port and connect to all active TCP streams
+ - Accept all incoming TCP connections
 
 ## TODO
  - Support local input
