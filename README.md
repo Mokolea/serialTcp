@@ -6,8 +6,8 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 [![License](https://img.shields.io/github/license/Mokolea/serialTcp.svg)](LICENSE)
 
 ## Features
- - Open serial port and connect to all active TCP streams
- - Accept all incoming TCP connections
+ - Opens a serial port and connects bidirectional all active TCP streams
+ - Accepts (no restrictions) incoming TCP connections
 
 ## TODO
  - Support local input
@@ -37,6 +37,16 @@ Arguments:
   localIp             IP-address this program is binding to, 'any' for any
                       interface.
   localPort           Port used by this program, listening.
+$ 
+
+$ ./serialTcp 
+Current log-file: "serialTcp.log" role "main"
+
+ERROR: Missing command-line arguments
+
+Serial ports:
+  'ttyAMA0'
+  'ttyS0'
 $ 
 ```
 
