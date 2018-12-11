@@ -38,7 +38,9 @@ Arguments:
                       interface.
   localPort           Port used by this program, listening.
 $ 
+```
 
+```
 $ ./serialTcp 
 Current log-file: "serialTcp.log" role "main"
 
