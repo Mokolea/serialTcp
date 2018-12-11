@@ -1,4 +1,4 @@
-# Serial - TCP
+# Serial - TCP [![Build Status](https://travis-ci.org/Mokolea/serialTcp.svg)](https://travis-ci.org/Mokolea/serialTcp)
 
 Provide remote (network) access to a serial port. Built using the [Qt Framework](https://doc.qt.io).
 
