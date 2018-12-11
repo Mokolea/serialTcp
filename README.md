@@ -1,9 +1,12 @@
 # Serial - TCP
 
-Open serial port and connect to all active TCP streams.
+Provide remote (network) access to a serial port.
 
 [![Release](https://img.shields.io/github/release/Mokolea/serialTcp.svg)](https://github.com/Mokolea/serialTcp/releases)
 [![License](https://img.shields.io/github/license/Mokolea/serialTcp.svg)](LICENSE)
+
+## Features
+ - Open serial port and connect to all active TCP streams.
 
 ## TODO
  - Support local input
@@ -14,7 +17,7 @@ Tested on platforms:
  - Raspberry Pi Model 3, Raspbian 9 (stretch) using Qt 5.7
  - Windows 10, VS 2015 using Qt 5.7
 
-Usage:
+## Usage
 ```
 $ ./serialTcp --help
 Current log-file: "serialTcp.log" role "main"
