@@ -1,6 +1,6 @@
 # Serial - TCP
 
-Provide remote (network) access to a serial port.
+Provide remote (network) access to a serial port. Built using the [Qt Framework](https://doc.qt.io).
 
 [![Release](https://img.shields.io/github/release/Mokolea/serialTcp.svg)](https://github.com/Mokolea/serialTcp/releases)
 [![License](https://img.shields.io/github/license/Mokolea/serialTcp.svg)](LICENSE)
