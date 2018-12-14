@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
   // handle command-line arguments
   QCommandLineParser parser;
-  parser.setApplicationDescription("Open serial port and connect to all active TCP streams.");
+  parser.setApplicationDescription("Open serial port and connect to all active TCP streams.\n(https://github.com/Mokolea/serialTcp)");
   parser.addHelpOption();
   parser.addVersionOption();
   parser.addPositionalArgument("serialPort", QCoreApplication::translate("main", "Serial port this program is opening."));
@@ -92,16 +92,15 @@ int main(int argc, char *argv[])
   // boolean option with multiple names (-o, --local-output)
   QCommandLineOption optionLocalOutput(QStringList() << "o" << "local-output", QCoreApplication::translate("main", "Activate local output."));
   parser.addOption(optionLocalOutput);
-  // process the actual command line arguments given by the user
+  // process the actual command line arguments given by the user (also handles the builtin options "-h" and "-v" and handles errors, then exit)
   parser.process(a);
+
   const QStringList args = parser.positionalArguments();
 
   if (args.size() < 4) {
     // parser.showVersion();
-    L_INFO(QString("\n"
-      "ERROR: Missing command-line arguments\n\n"
-      "Serial ports:"
-    ));
+    L_INFO("\nERROR: Missing command-line arguments (option -h displays help)");
+    L_INFO("\nSerial ports:");
     QList<QSerialPortInfo> serialPortInfoList = QSerialPortInfo::availablePorts();
     foreach(QSerialPortInfo serialPortInfo, serialPortInfoList) {
       L_INFO(QString("  '%1'").arg(serialPortInfo.portName()));
