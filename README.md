@@ -7,7 +7,7 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 
 ## Features
  - Opens a serial port and connects bidirectional all active TCP streams
- - Accepts (no restrictions) incoming TCP connections
+ - Accepts (no restrictions, no security considerations/precautions neither) incoming TCP connections
 
 ## TODO
  - Support local input
