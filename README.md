@@ -19,6 +19,7 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 Tested on platforms:
  - Ubuntu 16.04, 18.04 using Qt 5.7
  - Raspberry Pi Model 3, Raspbian 9 (stretch) using Qt 5.7
+ - macOS Sierra (10.12.6), using Qt 5.10
  - Windows 10, VS 2015 using Qt 5.7
 
 ## Usage
@@ -56,16 +57,16 @@ $
 ```
 
 ## Example
-Scenario:
- - Host A with serial port and IP 192.168.1.100
+Scenario (using Linux):
+ - Host A with serial port `/dev/ttyS0` and IP `192.168.1.100`
  - Host B connecting to serial port of host A
  - Host C also connecting to serial port of host A
 
-Host A: Prepare local serial port to be connected to from remote machines (Linux):
+Host A: Prepare local serial port to be connected to from remote machines:
 ```
 $ ./serialTcp ttyS0 115200 any 65432
 ```
-Host B and C: Connect to serial port of host A (Linux):
+Host B and C: Connect to serial port of host A:
 ```
 $ nc 192.168.1.100 65432
 ```
