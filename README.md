@@ -28,6 +28,7 @@ $ ./serialTcp --help
 Current log-file: "serialTcp.log" role "main"
 Usage: ./serialTcp [options] serialPort serialBaud localIp localPort
 Open serial port and connect to all active TCP streams.
+(https://github.com/Mokolea/serialTcp)
 
 Options:
   -h, --help          Displays this help.
@@ -38,9 +39,9 @@ Options:
 Arguments:
   serialPort          Serial port this program is opening.
   serialBaud          Data baud rate for serial port.
-  localIp             IP-address this program is binding to, 'any' for any
+  localIp             IP address this program is binding to, 'any' for any
                       interface.
-  localPort           Port used by this program, listening.
+  localPort           TCP port used by this program, listening.
 $ 
 ```
 
@@ -49,7 +50,7 @@ List available serial ports:
 $ ./serialTcp 
 Current log-file: "serialTcp.log" role "main"
 
-ERROR: Missing command-line arguments
+ERROR: Missing command-line arguments (option -h displays help)
 
 Serial ports:
   'ttyAMA0'
