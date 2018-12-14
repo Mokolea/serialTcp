@@ -84,8 +84,8 @@ int main(int argc, char *argv[])
   parser.addVersionOption();
   parser.addPositionalArgument("serialPort", QCoreApplication::translate("main", "Serial port this program is opening."));
   parser.addPositionalArgument("serialBaud", QCoreApplication::translate("main", "Data baud rate for serial port."));
-  parser.addPositionalArgument("localIp", QCoreApplication::translate("main", "IP-address this program is binding to, 'any' for any interface."));
-  parser.addPositionalArgument("localPort", QCoreApplication::translate("main", "Port used by this program, listening."));
+  parser.addPositionalArgument("localIp", QCoreApplication::translate("main", "IP address this program is binding to, 'any' for any interface."));
+  parser.addPositionalArgument("localPort", QCoreApplication::translate("main", "TCP port used by this program, listening."));
   // boolean option with multiple names (-i, --local-input)
   QCommandLineOption optionLocalInput(QStringList() << "i" << "local-input", QCoreApplication::translate("main", "Activate local input. (not implemented)"));
   parser.addOption(optionLocalInput);

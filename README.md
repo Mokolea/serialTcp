@@ -44,6 +44,7 @@ Arguments:
 $ 
 ```
 
+List available serial ports:
 ```
 $ ./serialTcp 
 Current log-file: "serialTcp.log" role "main"
