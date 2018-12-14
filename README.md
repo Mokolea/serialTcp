@@ -11,6 +11,9 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 
 ## TODO
  - Support local input
+ - Current limitations:
+    - Supported baud rates: 4800, 9600, 19200, 38400, 57600, 115200
+    - Fix serial port parameters: 8N1 (8 data bits, no parity, one stop bit), no flow control
 
 ## Info
 Tested on platforms:
@@ -50,6 +53,21 @@ Serial ports:
   'ttyAMA0'
   'ttyS0'
 $ 
+```
+
+## Example
+Scenario:
+ - Host A with serial port and IP 192.168.1.100
+ - Host B connecting to serial port of host A
+ - Host C also connecting to serial port of host A
+
+Host A: Prepare local serial port to be connected to from remote machines (Linux):
+```
+$ ./serialTcp ttyS0 115200 any 65432
+```
+Host B and C: Connect to serial port of host A (Linux):
+```
+$ nc 192.168.1.100 65432
 ```
 
 *MIT License*
