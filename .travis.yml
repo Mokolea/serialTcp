@@ -1,0 +1,50 @@
+language: cpp
+dist: xenial
+
+os:
+  - linux
+  #- osx
+
+compiler:
+  - clang
+  - gcc
+
+matrix:
+  exclude:
+    - os: linux
+      compiler: clang
+
+# addons:
+#   apt:
+#     packages:
+#       # qt4
+#       - qt4-dev-tools
+#       - qt4-qmake
+#       - libqt4-dev
+
+before_install:
+  # qt5
+  - sudo apt-get update -qq
+  - sudo apt-get install -y qt5-default
+  - sudo apt-get install -y libqt5serialport5 libqt5serialport5-dev
+
+script:
+  - echo $LANG
+  - echo $LC_ALL
+  - clang --version
+  - gcc --version
+  #- qmake -qt=qt5 -v
+  #- qmake -qt=qt5
+  - qmake -v
+  - qmake
+  - make
+  - ./serialTcp || echo - && ./serialTcp -h && echo - && ./serialTcp -v
+
+# branches:
+#   only:
+#     - master
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
