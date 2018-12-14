@@ -1,4 +1,5 @@
 # M.Ban
+.DS_Store
 # Qt Creator
 *.pro.user
 

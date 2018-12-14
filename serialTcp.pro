@@ -17,12 +17,12 @@ TEMPLATE = app
 INCLUDEPATH += SimpleQtLogger
 
 SOURCES += \
-    serialTcp/main.cpp \
-    serialTcp/task.cpp \
-    serialTcp/comdevice.cpp \
+    src/main.cpp \
+    src/task.cpp \
+    src/comdevice.cpp \
     SimpleQtLogger/simpleQtLogger.cpp
 
 HEADERS += \
-    serialTcp/task.h \
-    serialTcp/comdevice.h \
+    src/task.h \
+    src/comdevice.h \
     SimpleQtLogger/simpleQtLogger.h
