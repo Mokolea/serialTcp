@@ -1,7 +1,8 @@
 /*
-  Serial - TCP
 
-  Mario Ban, 2018-02
+Serial - TCP
+
+Mario Ban, 2018-02
 
 
 MIT License
@@ -301,6 +302,8 @@ ComDeviceScreen::~ComDeviceScreen()
 void ComDeviceScreen::init()
 {
   L_FUNC("");
+
+  // TODO implement this - remove experiments
 
   //_textStreamIn = new QTextStream(stdin);
   _textStreamOut = new QTextStream(stdout);

@@ -1,7 +1,8 @@
 /*
-  Serial - TCP
 
-  Mario Ban, 2018-02
+Serial - TCP
+
+Mario Ban, 2018-02
 
 
 MIT License
