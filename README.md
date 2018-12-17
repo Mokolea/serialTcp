@@ -13,7 +13,7 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
  - Support local input
  - Current limitations:
     - Supported baud rates: 4800, 9600, 19200, 38400, 57600, 115200
-    - Fix serial port parameters: 8N1 (8 data bits, no parity, one stop bit), no flow control
+    - Immutable serial port parameters: 8N1 (8 data bits, no parity, one stop bit), no flow control
 
 ## Info
 Tested on platforms:
@@ -53,14 +53,14 @@ Current log-file: "serialTcp.log" role "main"
 ERROR: Missing command-line arguments (option -h displays help)
 
 Serial ports:
-  'ttyAMA0'
+  'ttyUSB0'
   'ttyS0'
 $ 
 ```
 
-## Example
-Scenario (using Linux):
- - Host A with serial port `/dev/ttyS0` and IP `192.168.1.100`
+## Example (using Linux)
+Scenario 1: remote access logging information from a device (like Arduino, ...) attached to a serial port of Host A:
+ - Host A with serial port `/dev/ttyS0` (or `/dev/ttyUSB0`, ...) and IP address `192.168.1.100`
  - Host B connecting to serial port of host A
  - Host C also connecting to serial port of host A
 
