@@ -87,6 +87,9 @@ int main(int argc, char *argv[])
   parser.addPositionalArgument("serialBaud", QCoreApplication::translate("main", "Data baud rate for serial port."));
   parser.addPositionalArgument("localIp", QCoreApplication::translate("main", "IP address this program is binding to, 'any' for any interface."));
   parser.addPositionalArgument("localPort", QCoreApplication::translate("main", "TCP port used by this program, listening."));
+  // boolean option with multiple names (-l, --list-serial-ports)
+  QCommandLineOption optionListSerialPorts(QStringList() << "l" << "list-serial-ports", QCoreApplication::translate("main", "List all currently available serial ports."));
+  parser.addOption(optionListSerialPorts);
   // boolean option with multiple names (-i, --local-input)
   QCommandLineOption optionLocalInput(QStringList() << "i" << "local-input", QCoreApplication::translate("main", "Activate local input. (not implemented)"));
   parser.addOption(optionLocalInput);
@@ -98,15 +101,18 @@ int main(int argc, char *argv[])
 
   const QStringList args = parser.positionalArguments();
 
-  if (args.size() < 4) {
+  if (parser.isSet(optionListSerialPorts)) {
     // parser.showVersion();
-    L_INFO("\nERROR: Missing command-line arguments (option -h displays help)");
     L_INFO("\nSerial ports:");
     QList<QSerialPortInfo> serialPortInfoList = QSerialPortInfo::availablePorts();
     foreach(QSerialPortInfo serialPortInfo, serialPortInfoList) {
       L_INFO(QString("  '%1'").arg(serialPortInfo.portName()));
     }
     // parser.showHelp(1);
+    exit(0);
+  }
+  else if (args.size() < 4) {
+    L_INFO("\nERROR: Missing command-line arguments (option -h displays help)");
     exit(1);
   }
 
