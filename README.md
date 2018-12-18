@@ -31,26 +31,25 @@ Open serial port and connect to all active TCP streams.
 (https://github.com/Mokolea/serialTcp)
 
 Options:
-  -h, --help          Displays this help.
-  -v, --version       Displays version information.
-  -i, --local-input   Activate local input. (not implemented)
-  -o, --local-output  Activate local output.
+  -h, --help               Displays this help.
+  -v, --version            Displays version information.
+  -l, --list-serial-ports  List all currently available serial ports.
+  -i, --local-input        Activate local input. (not implemented)
+  -o, --local-output       Activate local output.
 
 Arguments:
-  serialPort          Serial port this program is opening.
-  serialBaud          Data baud rate for serial port.
-  localIp             IP address this program is binding to, 'any' for any
-                      interface.
-  localPort           TCP port used by this program, listening.
+  serialPort               Serial port this program is opening.
+  serialBaud               Data baud rate for serial port.
+  localIp                  IP address this program is binding to, 'any' for any
+                           interface.
+  localPort                TCP port used by this program, listening.
 $ 
 ```
 
-List available serial ports:
+List all currently available serial ports:
 ```
-$ ./serialTcp 
+$ ./serialTcp -l
 Current log-file: "serialTcp.log" role "main"
-
-ERROR: Missing command-line arguments (option -h displays help)
 
 Serial ports:
   'ttyUSB0'
