@@ -38,7 +38,7 @@ script:
   - qmake -v
   - qmake
   - make
-  - ./serialTcp || echo - && ./serialTcp -h && echo - && ./serialTcp -v
+  - ./serialTcp || echo --- && ./serialTcp -h && echo --- && ./serialTcp -v && echo --- && ./serialTcp -l
 
 # branches:
 #   only:
