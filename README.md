@@ -17,7 +17,7 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 
 ## Info
 Tested on platforms:
- - Ubuntu 16.04, 18.04 using Qt 5.7
+ - Ubuntu 16.04, 18.04 using Qt 5.5.1 / 5.7
  - Raspberry Pi Model 3, Raspbian 9 (stretch) using Qt 5.7
  - macOS Sierra (10.12.6), using Qt 5.10
  - Windows 10, VS 2015 using Qt 5.7
@@ -25,7 +25,6 @@ Tested on platforms:
 ## Usage
 ```
 $ ./serialTcp --help
-Current log-file: "serialTcp.log" role "main"
 Usage: ./serialTcp [options] serialPort serialBaud localIp localPort
 Open serial port and connect to all active TCP streams.
 (https://github.com/Mokolea/serialTcp)
@@ -49,7 +48,6 @@ $
 List all currently available serial ports:
 ```
 $ ./serialTcp -l
-Current log-file: "serialTcp.log" role "main"
 
 Serial ports:
   'ttyUSB0'
