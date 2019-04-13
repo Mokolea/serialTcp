@@ -70,6 +70,14 @@ Host B and C: Connect to serial port of host A:
 $ nc 192.168.1.100 65432
 ```
 
+## Hint: Linux socat
+On Linux you can also use `socat` to access a serial port over TCP.
+
+Example (see above): Host A:
+```
+$ socat TCP-LISTEN:65432,fork,reuseaddr FILE:/dev/ttyS0,115200,raw
+```
+
 *MIT License*
 
 -- Mario
