@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  // Task *task = new Task(a.arguments().at(1), a.arguments().at(2), a.arguments().at(3), a.arguments().at(4), &a); // problem: children of task are deleted after SimpleQtLogger !!!
+  // Task *task = new Task(...); // problem: children of task are deleted after SimpleQtLogger !!!
   Task task(args.at(0), args.at(1), args.at(2), args.at(3), parser.isSet(optionLocalInput), parser.isSet(optionLocalOutput), &a);
   QObject::connect(&task, SIGNAL(finished()), &a, SLOT(quit()));
   QTimer::singleShot(0, &task, SLOT(init()));

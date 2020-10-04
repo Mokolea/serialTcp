@@ -32,13 +32,29 @@ SOFTWARE.
 #ifndef COMDEVICE_H
 #define COMDEVICE_H
 
+#ifndef COMDEVICE_ENABLE_SERIAL
+#  define COMDEVICE_ENABLE_SERIAL   1
+#endif
+#ifndef COMDEVICE_ENABLE_TCP
+#  define COMDEVICE_ENABLE_TCP   1
+#endif
+#ifndef COMDEVICE_ENABLE_SCREEN
+#  define COMDEVICE_ENABLE_SCREEN   1
+#endif
+
 #include <QObject>
 #include <QByteArray>
+#if COMDEVICE_ENABLE_SERIAL > 0
 #include <QSerialPort>
+#endif
+#if COMDEVICE_ENABLE_TCP > 0
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QSocketNotifier>
+#endif
+#if COMDEVICE_ENABLE_SCREEN > 0
 #include <QFile>
+#endif
 
 class ComDevice : public QObject
 {
@@ -65,6 +81,7 @@ private:
 
 // -------------------------------------------------------------------------------------------------
 
+#if COMDEVICE_ENABLE_SERIAL > 0
 class ComDeviceSerial : public ComDevice
 {
   Q_OBJECT
@@ -89,9 +106,11 @@ private:
 
   QSerialPort* _serialPort;
 };
+#endif
 
 // -------------------------------------------------------------------------------------------------
 
+#if COMDEVICE_ENABLE_TCP > 0
 class ComDeviceTcp : public ComDevice
 {
   Q_OBJECT
@@ -119,9 +138,11 @@ private:
   QTcpServer* _tcpServer;
   QList<QTcpSocket*> _tcpSocketList;
 };
+#endif
 
 // -------------------------------------------------------------------------------------------------
 
+#if COMDEVICE_ENABLE_SCREEN > 0
 class ComDeviceScreen : public ComDevice
 {
   Q_OBJECT
@@ -146,5 +167,6 @@ private:
   QSocketNotifier* _socketNotifierIn;
   QFile* _fileIn;
 };
+#endif
 
 #endif // COMDEVICE_H

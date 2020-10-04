@@ -59,6 +59,7 @@ void ComDevice::slotDataSend(const QByteArray& data)
 
 // -------------------------------------------------------------------------------------------------
 
+#if COMDEVICE_ENABLE_SERIAL > 0
 ComDeviceSerial::ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject *parent)
   : ComDevice(parent)
   , _serialPortName(serialPortName)
@@ -154,9 +155,11 @@ void ComDeviceSerial::slotError(QSerialPort::SerialPortError error)
   L_WARN(QString("Serial port error: %1").arg(error));
   emit finished();
 }
+#endif
 
 // -------------------------------------------------------------------------------------------------
 
+#if COMDEVICE_ENABLE_TCP > 0
 ComDeviceTcp::ComDeviceTcp(const QString& localIp, const QString& localPort, QObject *parent)
   : ComDevice(parent)
   , _localIp(localIp)
@@ -269,9 +272,11 @@ void ComDeviceTcp::slotReadyRead()
   QByteArray data = tcpSocket->readAll();
   emit signalDataRecv(data);
 }
+#endif
 
 // -------------------------------------------------------------------------------------------------
 
+#if COMDEVICE_ENABLE_SCREEN > 0
 ComDeviceScreen::ComDeviceScreen(QObject *parent)
   : ComDevice(parent)
   , _textStreamIn(0)
@@ -400,3 +405,4 @@ void ComDeviceScreen::slotActivated(int socket)
   //QByteArray data = QByteArray::fromStdString(_textStreamIn->readLine().toStdString());
   //emit signalDataRecv(data);
 }
+#endif
