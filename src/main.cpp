@@ -84,10 +84,10 @@ int main(int argc, char *argv[])
   parser.setApplicationDescription("Open serial port and connect to all active TCP streams.\n(https://github.com/Mokolea/serialTcp)");
   parser.addHelpOption();
   parser.addVersionOption();
-  parser.addPositionalArgument("serialPort", QCoreApplication::translate("main", "Serial port this program is opening."));
-  parser.addPositionalArgument("serialBaud", QCoreApplication::translate("main", "Data baud rate for serial port."));
-  parser.addPositionalArgument("localIp", QCoreApplication::translate("main", "IP address this program is binding to, 'any' for any interface."));
-  parser.addPositionalArgument("localPort", QCoreApplication::translate("main", "TCP port used by this program, listening."));
+  parser.addPositionalArgument("serial-port", QCoreApplication::translate("main", "Serial port this program is opening."));
+  parser.addPositionalArgument("serial-baud", QCoreApplication::translate("main", "Data baud rate for serial port."));
+  parser.addPositionalArgument("local-ip", QCoreApplication::translate("main", "IP address this program is binding to, 'any' for any interface."));
+  parser.addPositionalArgument("local-port", QCoreApplication::translate("main", "TCP port used by this program, listening."));
   // boolean option with multiple names (-l, --list-serial-ports)
   QCommandLineOption optionListSerialPorts(QStringList() << "l" << "list-serial-ports", QCoreApplication::translate("main", "List all currently available serial ports."));
   parser.addOption(optionListSerialPorts);
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 
   if (parser.isSet(optionListSerialPorts)) {
     // parser.showVersion();
-    L_INFO("\nSerial ports:");
+    L_INFO("Serial ports:");
     QList<QSerialPortInfo> serialPortInfoList = QSerialPortInfo::availablePorts();
     foreach(QSerialPortInfo serialPortInfo, serialPortInfoList) {
       L_INFO(QString("  '%1'").arg(serialPortInfo.portName()));
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     exit(0);
   }
   else if (args.size() < 4) {
-    L_INFO("\nERROR: Missing command-line arguments (option -h displays help)");
+    L_ERROR("Missing command-line arguments (option -h displays help)");
     exit(1);
   }
 
