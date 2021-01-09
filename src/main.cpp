@@ -46,13 +46,14 @@ int main(int argc, char *argv[])
   QCoreApplication::setApplicationName(TOOL_NAME);
   QCoreApplication::setApplicationVersion(TOOL_VERSION);
 
-  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 2, 0), "main", "SimpleQtLogger version");
+  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 0), "main", "SimpleQtLogger version");
 
   // enable sinks
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
   simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = true;
   simpleqtlogger::ENABLE_LOG_SINK_QDEBUG = false;
   simpleqtlogger::ENABLE_LOG_SINK_SIGNAL = false;
+  simpleqtlogger::ENABLE_LOG_SINK_SYSLOG = false;
   // set log-features
   simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
   simpleqtlogger::ENABLE_CONSOLE_COLOR = false;
