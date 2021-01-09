@@ -59,24 +59,24 @@ SOFTWARE.
 
 class ComDevice : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  ComDevice(QObject *parent);
-  virtual ~ComDevice();
+  public:
+    ComDevice(QObject* parent);
+    virtual ~ComDevice();
 
-public slots:
-  virtual void init();
-  virtual void slotDataSend(const QByteArray& data);
+  public slots:
+    virtual void init();
+    virtual void slotDataSend(const QByteArray& data);
 
-signals:
-  void finished();
-  void signalDataRecv(const QByteArray& data);
+  signals:
+    void finished();
+    void signalDataRecv(const QByteArray& data);
 
-private:
-  Q_DISABLE_COPY(ComDevice)
+  private:
+    Q_DISABLE_COPY(ComDevice)
 
-private:
+  private:
 
 };
 
@@ -85,27 +85,27 @@ private:
 #if COMDEVICE_ENABLE_SERIAL > 0
 class ComDeviceSerial : public ComDevice
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  explicit ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject *parent);
-  virtual ~ComDeviceSerial();
+  public:
+    explicit ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject* parent);
+    virtual ~ComDeviceSerial();
 
-public slots:
-  virtual void init();
-  virtual void slotDataSend(const QByteArray& data);
+  public slots:
+    virtual void init();
+    virtual void slotDataSend(const QByteArray& data);
 
-  void slotReadyRead();
-  void slotError(QSerialPort::SerialPortError error);
+    void slotReadyRead();
+    void slotError(QSerialPort::SerialPortError error);
 
-private:
-  Q_DISABLE_COPY(ComDeviceSerial)
+  private:
+    Q_DISABLE_COPY(ComDeviceSerial)
 
-private:
-  const QString _serialPortName;
-  const QString _serialBaudRate;
+  private:
+    const QString _serialPortName;
+    const QString _serialBaudRate;
 
-  QSerialPort* _serialPort;
+    QSerialPort* _serialPort;
 };
 #endif
 
@@ -114,30 +114,30 @@ private:
 #if COMDEVICE_ENABLE_TCP > 0
 class ComDeviceTcp : public ComDevice
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  ComDeviceTcp(const QString& localIp, const QString& localPort, QObject *parent);
-  virtual ~ComDeviceTcp();
+  public:
+    ComDeviceTcp(const QString& localIp, const QString& localPort, QObject* parent);
+    virtual ~ComDeviceTcp();
 
-public slots:
-  virtual void init();
-  virtual void slotDataSend(const QByteArray& data);
+  public slots:
+    virtual void init();
+    virtual void slotDataSend(const QByteArray& data);
 
-  void slotAcceptError(QAbstractSocket::SocketError socketError);
-  void slotNewConnection();
-  void slotDisconnected();
-  void slotReadyRead();
+    void slotAcceptError(QAbstractSocket::SocketError socketError);
+    void slotNewConnection();
+    void slotDisconnected();
+    void slotReadyRead();
 
-private:
-  Q_DISABLE_COPY(ComDeviceTcp)
+  private:
+    Q_DISABLE_COPY(ComDeviceTcp)
 
-private:
-  const QString _localIp;
-  const QString _localPort;
+  private:
+    const QString _localIp;
+    const QString _localPort;
 
-  QTcpServer* _tcpServer;
-  QList<QTcpSocket*> _tcpSocketList;
+    QTcpServer* _tcpServer;
+    QList<QTcpSocket*> _tcpSocketList;
 };
 #endif
 
@@ -146,27 +146,27 @@ private:
 #if COMDEVICE_ENABLE_SCREEN > 0
 class ComDeviceScreen : public ComDevice
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  ComDeviceScreen(QObject *parent);
-  virtual ~ComDeviceScreen();
+  public:
+    ComDeviceScreen(QObject* parent);
+    virtual ~ComDeviceScreen();
 
-public slots:
-  virtual void init();
-  virtual void slotDataSend(const QByteArray& data);
+  public slots:
+    virtual void init();
+    virtual void slotDataSend(const QByteArray& data);
 
-  void slotReadyRead();
-  void slotActivated(int socket);
+    void slotReadyRead();
+    void slotActivated(int socket);
 
-private:
-  Q_DISABLE_COPY(ComDeviceScreen)
+  private:
+    Q_DISABLE_COPY(ComDeviceScreen)
 
-private:
-  QTextStream* _textStreamIn;
-  QTextStream* _textStreamOut;
-  QSocketNotifier* _socketNotifierIn;
-  QFile* _fileIn;
+  private:
+    QTextStream* _textStreamIn;
+    QTextStream* _textStreamOut;
+    QSocketNotifier* _socketNotifierIn;
+    QFile* _fileIn;
 };
 #endif
 

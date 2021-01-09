@@ -34,7 +34,7 @@ SOFTWARE.
 #include <simpleQtLogger.h>
 #include <QTimer>
 
-ComDevice::ComDevice(QObject *parent)
+ComDevice::ComDevice(QObject* parent)
   : QObject(parent)
 {
   L_FUNC("");
@@ -61,7 +61,7 @@ void ComDevice::slotDataSend(const QByteArray& data)
 // -------------------------------------------------------------------------------------------------
 
 #if COMDEVICE_ENABLE_SERIAL > 0
-ComDeviceSerial::ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject *parent)
+ComDeviceSerial::ComDeviceSerial(const QString& serialPortName, const QString& serialBaudRate, QObject* parent)
   : ComDevice(parent)
   , _serialPortName(serialPortName)
   , _serialBaudRate(serialBaudRate)
@@ -126,11 +126,11 @@ void ComDeviceSerial::slotDataSend(const QByteArray& data)
   }
 
   qint64 number = _serialPort->write(data);
-  if(number == -1) {
+  if (number == -1) {
     L_ERROR("Serial port write failed");
     emit finished();
   }
-  else if(number != data.size()) {
+  else if (number != data.size()) {
     L_WARN("Serial port write partial data");
     emit finished();
   }
@@ -161,7 +161,7 @@ void ComDeviceSerial::slotError(QSerialPort::SerialPortError error)
 // -------------------------------------------------------------------------------------------------
 
 #if COMDEVICE_ENABLE_TCP > 0
-ComDeviceTcp::ComDeviceTcp(const QString& localIp, const QString& localPort, QObject *parent)
+ComDeviceTcp::ComDeviceTcp(const QString& localIp, const QString& localPort, QObject* parent)
   : ComDevice(parent)
   , _localIp(localIp)
   , _localPort(localPort)
@@ -174,7 +174,7 @@ ComDeviceTcp::~ComDeviceTcp()
 {
   L_FUNC("");
   if (_tcpServer) {
-    foreach(QTcpSocket* tcpSocket, _tcpSocketList) {
+    foreach (QTcpSocket* tcpSocket, _tcpSocketList) {
       tcpSocket->disconnectFromHost();
       L_NOTE("TCP-Socket closed");
     }
@@ -211,7 +211,7 @@ void ComDeviceTcp::slotDataSend(const QByteArray& data)
     return;
   }
 
-  foreach(QTcpSocket* tcpSocket, _tcpSocketList) {
+  foreach (QTcpSocket* tcpSocket, _tcpSocketList) {
     qint64 number = tcpSocket->write(data);
     if (number == -1) {
       L_ERROR("TCP-Socket write failed");
@@ -278,7 +278,7 @@ void ComDeviceTcp::slotReadyRead()
 // -------------------------------------------------------------------------------------------------
 
 #if COMDEVICE_ENABLE_SCREEN > 0
-ComDeviceScreen::ComDeviceScreen(QObject *parent)
+ComDeviceScreen::ComDeviceScreen(QObject* parent)
   : ComDevice(parent)
   , _textStreamIn(0)
   , _textStreamOut(0)
