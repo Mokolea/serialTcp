@@ -1,0 +1,3 @@
+[submodule "SimpleQtLogger"]
+	path = SimpleQtLogger
+	url = ../SimpleQtLogger.git
