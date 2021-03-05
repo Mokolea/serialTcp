@@ -117,7 +117,9 @@ class ComDeviceTcp : public ComDevice
     Q_OBJECT
 
   public:
-    ComDeviceTcp(const QString& localIp, const QString& localPort, QObject* parent);
+    enum class Mode { TEXT, BINARY };
+
+    ComDeviceTcp(const QString& localIp, const QString& localPort, Mode mode, QObject* parent);
     virtual ~ComDeviceTcp();
 
   public slots:
@@ -132,12 +134,16 @@ class ComDeviceTcp : public ComDevice
   private:
     Q_DISABLE_COPY(ComDeviceTcp)
 
+    QString peerString(const QTcpSocket* tcpSocket);
+
   private:
     const QString _localIp;
     const QString _localPort;
+    const Mode _mode;
 
     QTcpServer* _tcpServer;
     QList<QTcpSocket*> _tcpSocketList;
+    QMap<QString,QString> _dataRecv; // used if Mode::TEXT
 };
 #endif
 

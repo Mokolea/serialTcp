@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
   parser.addHelpOption();
   parser.addVersionOption();
   parser.addPositionalArgument("serial-port", QCoreApplication::translate("main", "Serial port this program is opening."));
-  parser.addPositionalArgument("serial-baud", QCoreApplication::translate("main", "Data baud rate for serial port."));
+  parser.addPositionalArgument("serial-baud", QCoreApplication::translate("main", "Data baud rate for serial port, e.g. 115200 (8N1, no flow control)."));
   parser.addPositionalArgument("local-ip", QCoreApplication::translate("main", "IP address this program is binding to, 'any' for any interface."));
   parser.addPositionalArgument("local-port", QCoreApplication::translate("main", "TCP port used by this program, listening."));
   // boolean option with multiple names (-l, --list-serial-ports)
@@ -99,6 +99,9 @@ int main(int argc, char *argv[])
   // boolean option with multiple names (-o, --local-output)
   QCommandLineOption optionLocalOutput(QStringList() << "o" << "local-output", QCoreApplication::translate("main", "Activate local output."));
   parser.addOption(optionLocalOutput);
+  // boolean option with multiple names (-m, --mode-binary)
+  QCommandLineOption optionModeBinary(QStringList() << "m" << "mode-binary", QCoreApplication::translate("main", "TCP mode binary, default text (multi connection, wait for <LF>)."));
+  parser.addOption(optionModeBinary);
   // process the actual command line arguments given by the user (also handles the builtin options "-h" and "-v" and handles errors, then exit)
   parser.process(a);
 
@@ -120,7 +123,8 @@ int main(int argc, char *argv[])
   }
 
   // Task *task = new Task(...); // problem: children of task are deleted after SimpleQtLogger !!!
-  Task task(args.at(0), args.at(1), args.at(2), args.at(3), parser.isSet(optionLocalInput), parser.isSet(optionLocalOutput), &a);
+  Task task(args.at(0), args.at(1), args.at(2), args.at(3), parser.isSet(optionModeBinary) ? ComDeviceTcp::Mode::BINARY : ComDeviceTcp::Mode::TEXT,
+            parser.isSet(optionLocalInput), parser.isSet(optionLocalOutput), &a);
   QObject::connect(&task, SIGNAL(finished()), &a, SLOT(quit()));
   QTimer::singleShot(0, &task, SLOT(init()));
 

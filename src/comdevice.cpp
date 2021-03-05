@@ -161,10 +161,11 @@ void ComDeviceSerial::slotError(QSerialPort::SerialPortError error)
 // -------------------------------------------------------------------------------------------------
 
 #if COMDEVICE_ENABLE_TCP > 0
-ComDeviceTcp::ComDeviceTcp(const QString& localIp, const QString& localPort, QObject* parent)
+ComDeviceTcp::ComDeviceTcp(const QString& localIp, const QString& localPort, Mode mode, QObject* parent)
   : ComDevice(parent)
   , _localIp(localIp)
   , _localPort(localPort)
+  , _mode(mode)
   , _tcpServer(0)
 {
   L_FUNC("");
@@ -218,7 +219,7 @@ void ComDeviceTcp::slotDataSend(const QByteArray& data)
       emit finished();
     }
     else if (number != data.size()) {
-      L_WARN("TCP-Socket write partial data");
+      L_WARN("TCP-Socket write partial data"); // TODO
       emit finished();
     }
   }
@@ -243,6 +244,12 @@ void ComDeviceTcp::slotNewConnection()
     return;
   }
 
+  if (_mode == Mode::BINARY && !_tcpSocketList.isEmpty()) {
+    // limit to one connection
+    tcpSocket->disconnectFromHost();
+    return;
+  }
+
   connect(tcpSocket, &QAbstractSocket::disconnected, this, &ComDeviceTcp::slotDisconnected);
   connect(tcpSocket, &QIODevice::readyRead, this, &ComDeviceTcp::slotReadyRead);
 
@@ -258,6 +265,12 @@ void ComDeviceTcp::slotDisconnected()
   if (!tcpSocket) {
     return;
   }
+  if (_mode == Mode::TEXT) {
+    QString key = peerString(tcpSocket); // map key
+    if (_dataRecv.remove(key) > 0) {
+      L_DEBUG(QString("key remove: %1").arg(key));
+    }
+  }
   _tcpSocketList.removeAll(tcpSocket);
   tcpSocket->deleteLater();
   L_NOTE(QString("TCP-Socket closed: %1 %2").arg(tcpSocket->peerAddress().toString()).arg(tcpSocket->peerPort()));
@@ -271,7 +284,38 @@ void ComDeviceTcp::slotReadyRead()
     return;
   }
   QByteArray data = tcpSocket->readAll();
-  emit signalDataRecv(data);
+  if (_mode == Mode::BINARY) {
+    emit signalDataRecv(data);
+    return;
+  }
+  // handle LF in multi-tcp-connection mode (Mode::TEXT)
+  QString key = peerString(tcpSocket); // map key
+  _dataRecv[key] += QString::fromUtf8(data);
+  if (_dataRecv[key].contains("\n")) {
+    QStringList dataRecvList = _dataRecv[key].split("\n");
+    QStringList dataRecvListTrimmed;
+    for (const QString& dataRecv : dataRecvList) {
+      dataRecvListTrimmed.push_back(dataRecv.trimmed());
+    }
+    while (dataRecvListTrimmed.size() >= 2) {
+      QString dataRecv = dataRecvListTrimmed.takeFirst();
+      _dataRecv[key] = dataRecvListTrimmed.join("\n");
+      // L_DEBUG(QString("dataRecvListTrimmed.size: %1").arg(dataRecvListTrimmed.size()));
+      QByteArray data;
+      data.append(dataRecv);
+      data.append("\n");
+      emit signalDataRecv(data);
+    }
+  }
+}
+
+QString ComDeviceTcp::peerString(const QTcpSocket* tcpSocket)
+{
+  // L_FUNC("");
+  if (!tcpSocket) {
+    return "-";
+  }
+  return QString("%1:%2").arg(tcpSocket->peerAddress().toString()).arg(tcpSocket->peerPort());
 }
 #endif
 

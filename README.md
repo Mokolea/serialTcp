@@ -6,7 +6,7 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 [![License](https://img.shields.io/github/license/Mokolea/serialTcp.svg)](LICENSE)
 
 ## Features
- - Opens a serial port and connects bidirectional all active TCP streams
+ - Opens a serial port and connects bidirectional all active TCP streams (text mode)
  - Accepts (no restrictions, no security considerations/precautions neither) incoming TCP connections
 
 ## TODO
@@ -25,7 +25,7 @@ Tested on platforms:
 ## Usage
 ```
 $ ./serialTcp --help
-Usage: ./serialTcp [options] serialPort serialBaud localIp localPort
+Usage: ./serialTcp [options] serial-port serial-baud local-ip local-port
 Open serial port and connect to all active TCP streams.
 (https://github.com/Mokolea/serialTcp)
 
@@ -35,13 +35,16 @@ Options:
   -l, --list-serial-ports  List all currently available serial ports.
   -i, --local-input        Activate local input. (not implemented)
   -o, --local-output       Activate local output.
+  -m, --mode-binary        TCP mode binary, default text (multi connection,
+                           wait for <LF>).
 
 Arguments:
-  serialPort               Serial port this program is opening.
-  serialBaud               Data baud rate for serial port.
-  localIp                  IP address this program is binding to, 'any' for any
+  serial-port              Serial port this program is opening.
+  serial-baud              Data baud rate for serial port, e.g. 115200 (8N1, no
+                           flow control).
+  local-ip                 IP address this program is binding to, 'any' for any
                            interface.
-  localPort                TCP port used by this program, listening.
+  local-port               TCP port used by this program, listening.
 $ 
 ```
 
