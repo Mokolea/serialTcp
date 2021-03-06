@@ -9,7 +9,7 @@ QT -= gui
 
 TARGET = serialTcp
 
-CONFIG += console
+CONFIG += c++11 console
 CONFIG -= app_bundle
 #CONFIG += sdk_no_version_check
 
