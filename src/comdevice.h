@@ -143,7 +143,7 @@ class ComDeviceTcp : public ComDevice
 
     QTcpServer* _tcpServer;
     QList<QTcpSocket*> _tcpSocketList;
-    QMap<QString,QString> _dataRecv; // used if Mode::TEXT
+    QMap<QString, QString> _dataRecv; // used if Mode::TEXT
 };
 #endif
 
