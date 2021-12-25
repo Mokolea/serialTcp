@@ -292,7 +292,7 @@ void ComDeviceTcp::slotReadyRead()
   QString key = peerString(tcpSocket); // map key
   _dataRecv[key] += QString::fromUtf8(data);
   if (_dataRecv[key].contains("\n")) {
-    QStringList dataRecvList = _dataRecv[key].split("\n");
+    const QStringList dataRecvList = _dataRecv[key].split("\n");
     QStringList dataRecvListTrimmed;
     for (const QString& dataRecv : dataRecvList) {
       dataRecvListTrimmed.push_back(dataRecv.trimmed());
@@ -301,8 +301,7 @@ void ComDeviceTcp::slotReadyRead()
       QString dataRecv = dataRecvListTrimmed.takeFirst();
       _dataRecv[key] = dataRecvListTrimmed.join("\n");
       // L_DEBUG(QString("dataRecvListTrimmed.size: %1").arg(dataRecvListTrimmed.size()));
-      QByteArray data;
-      data.append(dataRecv);
+      QByteArray data = dataRecv.toUtf8();
       data.append("\n");
       emit signalDataRecv(data);
     }
