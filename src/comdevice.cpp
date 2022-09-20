@@ -194,13 +194,24 @@ void ComDeviceTcp::init()
   connect(_tcpServer, &QTcpServer::newConnection, this, &ComDeviceTcp::slotNewConnection);
 
   QHostAddress hostAddress = _localIp.compare("any", Qt::CaseInsensitive) == 0 ? QHostAddress::Any : QHostAddress(_localIp);
-  if (!_tcpServer->listen(hostAddress, _localPort.toUShort())) {
+  if (hostAddress.isNull()) {
+    L_ERROR("TCP-Server listen address invalid");
+    emit finished();
+    return;
+  }
+
+  bool ok = false;
+  quint16 localPort = _localPort.toUShort(&ok);
+  if (!ok) {
+    L_ERROR("TCP-Server local port invalid");
+    emit finished();
+    return;
+  }
+
+  if (!_tcpServer->listen(hostAddress, localPort)) {
     L_ERROR("TCP-Server listen failed");
     emit finished();
-  }
-  if (hostAddress.isNull()) {
-    L_ERROR("TCP-Server listen address error");
-    emit finished();
+    return;
   }
   L_NOTE(QString("TCP-Server listening: %1 %2").arg(hostAddress.toString()).arg(_localPort));
 }
