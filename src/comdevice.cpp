@@ -8,7 +8,7 @@ https://github.com/Mokolea/serialTcp
 
 MIT License
 
-Copyright (c) 2018 Mario Ban
+Copyright (c) 2023 Mario Ban
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -110,7 +110,11 @@ void ComDeviceSerial::init()
   _serialPort->setFlowControl(QSerialPort::NoFlowControl);
 
   connect(_serialPort, &QSerialPort::readyRead, this, &ComDeviceSerial::slotReadyRead);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 8, 0))
+  connect(_serialPort, &QSerialPort::errorOccurred, this, &ComDeviceSerial::slotError);
+#else
   connect(_serialPort, static_cast<void(QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error), this, &ComDeviceSerial::slotError);
+#endif
 
   if (!_serialPort->open(QIODevice::ReadWrite)) {
     L_ERROR("Serial port open failed");
