@@ -17,6 +17,8 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 
 ## Info
 Tested on platforms:
+ - Debian 12 rc3 using Qt 6.4.2
+ - Ubuntu 20.04.1 LTS using Qt 5.12.8
  - Ubuntu 16.04, 18.04 using Qt 5.5.1 / 5.7
  - Raspberry Pi Model 3, Raspbian 9 (stretch) using Qt 5.7
  - macOS Sierra (10.12.6), using Qt 5.10

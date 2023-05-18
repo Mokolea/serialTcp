@@ -8,7 +8,7 @@ https://github.com/Mokolea/serialTcp
 
 MIT License
 
-Copyright (c) 2018 Mario Ban
+Copyright (c) 2023 Mario Ban
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ SOFTWARE.
 #include "task.h"
 
 #define TOOL_NAME "Serial-TCP"
-#define TOOL_VERSION "v1.1"
+#define TOOL_VERSION "v1.2"
 
 int main(int argc, char *argv[])
 {
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
   QCoreApplication::setApplicationName(TOOL_NAME);
   QCoreApplication::setApplicationVersion(TOOL_VERSION);
 
-  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 0), "main", "SimpleQtLogger version");
+  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 2), "main", "SimpleQtLogger version");
 
   // enable sinks
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
