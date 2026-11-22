@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 serialTcp is a small Qt console app (Qt 6, previously Qt 5) that opens a serial port and bridges it bidirectionally to every connected TCP client of a listening TCP server. No auth or access restrictions on incoming connections, by design.
 
-`SimpleQtLogger/` is a git submodule (`../SimpleQtLogger.git`, relative URL) compiled directly into the app. It has its own `CLAUDE.md`; treat it as a separate repo and commit changes there, not here. `main.cpp` asserts a minimum `SQTL_VERSION` (1.3.2).
+`SimpleQtLogger/` is a git submodule (`../SimpleQtLogger.git`, relative URL) compiled directly into the app. It has its own `CLAUDE.md`; treat it as a separate repo and commit changes there, not here. `main.cpp` asserts a minimum `SQTL_VERSION` (1.3.3).
 
 ## Build and run
 
