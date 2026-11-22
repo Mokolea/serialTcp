@@ -65,8 +65,8 @@ void Task::init()
   _comDeviceTcp = new ComDeviceTcp(_localIp, _localPort, _mode, this);
   _comDeviceScreen = new ComDeviceScreen(this);
 
-  connect(_comDeviceSerial, &ComDevice::finished, this, &Task::slotSerialFinished);
-  connect(_comDeviceTcp, &ComDevice::finished, this, &Task::slotFinished);
+  connect(_comDeviceSerial, &ComDevice::finished, this, &Task::slotFailed);
+  connect(_comDeviceTcp, &ComDevice::finished, this, &Task::slotFailed);
   connect(_comDeviceScreen, &ComDevice::finished, this, &Task::slotFinished);
 
   connect(_comDeviceSerial, &ComDevice::signalDataRecv, _comDeviceTcp, &ComDevice::slotDataSend);
@@ -89,10 +89,10 @@ void Task::slotFinished()
   emit finished(_exitCode);
 }
 
-void Task::slotSerialFinished()
+void Task::slotFailed()
 {
   L_FUNC("");
-  // serial device only finishes on failure (open, write or port error)
+  // serial and TCP devices only finish on failure (open/listen, write, port/accept error)
   _exitCode = 1;
   slotFinished();
 }

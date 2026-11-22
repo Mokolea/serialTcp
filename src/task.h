@@ -56,7 +56,7 @@ private:
 
 private slots:
   void slotFinished();
-  void slotSerialFinished();
+  void slotFailed();
 
 private:
   const QString _serialPortName;
