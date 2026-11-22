@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
   // Task *task = new Task(...); // problem: children of task are deleted after SimpleQtLogger !!!
   Task task(args.at(0), args.at(1), args.at(2), args.at(3), parser.isSet(optionModeBinary) ? ComDeviceTcp::Mode::BINARY : ComDeviceTcp::Mode::TEXT,
             parser.isSet(optionLocalInput), parser.isSet(optionLocalOutput), &a);
-  QObject::connect(&task, SIGNAL(finished()), &a, SLOT(quit()));
+  QObject::connect(&task, &Task::finished, &a, &QCoreApplication::exit);
   QTimer::singleShot(0, &task, SLOT(init()));
 
   // initialize SimpleQtLogger (step 2/2)

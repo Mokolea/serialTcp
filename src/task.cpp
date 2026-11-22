@@ -47,6 +47,7 @@ Task::Task(const QString& serialPortName, const QString& serialBaudRate,
   , _comDeviceSerial(0)
   , _comDeviceTcp(0)
   , _comDeviceScreen(0)
+  , _exitCode(0)
 {
   L_FUNC("");
 }
@@ -64,7 +65,7 @@ void Task::init()
   _comDeviceTcp = new ComDeviceTcp(_localIp, _localPort, _mode, this);
   _comDeviceScreen = new ComDeviceScreen(this);
 
-  connect(_comDeviceSerial, &ComDevice::finished, this, &Task::slotFinished);
+  connect(_comDeviceSerial, &ComDevice::finished, this, &Task::slotSerialFinished);
   connect(_comDeviceTcp, &ComDevice::finished, this, &Task::slotFinished);
   connect(_comDeviceScreen, &ComDevice::finished, this, &Task::slotFinished);
 
@@ -85,5 +86,13 @@ void Task::init()
 void Task::slotFinished()
 {
   L_FUNC("");
-  emit finished();
+  emit finished(_exitCode);
+}
+
+void Task::slotSerialFinished()
+{
+  L_FUNC("");
+  // serial device only finishes on failure (open, write or port error)
+  _exitCode = 1;
+  slotFinished();
 }
