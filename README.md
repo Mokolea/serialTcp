@@ -60,6 +60,14 @@ Serial ports:
 $ 
 ```
 
+Exit codes:
+ - `0`: `-h`, `-v` or `-l` completed
+ - `1`: unknown option or missing arguments
+ - `1`: serial port failure (open, write or port error)
+ - `1`: TCP server failure (invalid address or port, listen, accept or write error)
+
+While running, the program does not exit by itself; stop it with Ctrl+C.
+
 ## Example (using Linux)
 Scenario 1: remote access logging information from a device (like Arduino, ...) attached to a serial port of Host A:
  - Host A with serial port `/dev/ttyS0` (or `/dev/ttyUSB0`, ...) and IP address `192.168.1.100`
