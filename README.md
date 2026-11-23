@@ -12,7 +12,6 @@ Provide remote (network) access to a serial port. Built using the [Qt Framework]
 ## TODO
  - Support local input
  - Current limitations:
-    - Supported baud rates: 4800, 9600, 19200, 38400, 57600, 115200
     - Immutable serial port parameters: 8N1 (8 data bits, no parity, one stop bit), no flow control
 
 ## Info
@@ -64,9 +63,13 @@ $
 
 Exit codes:
  - `0`: `-h`, `-v` or `-l` completed
- - `1`: unknown option or missing arguments
- - `1`: serial port failure (open, write or port error)
- - `1`: TCP server failure (invalid address or port, listen, accept or write error)
+ - `1`: unknown option, missing or extra arguments
+ - `1`: serial port failure (invalid baud rate, open, write or port error)
+ - `1`: TCP server failure (invalid address or port, listen or accept error)
+ - `1`: local output failure (`-o`, stdout write error)
+
+A single TCP client is disconnected, without stopping the program, if writing to it fails, if it does not read (more than 4 MB pending) or, in text mode, if it sends a line longer than 64 KB.
+With `-o`, serial data is written to stdout unchanged and console logging is turned off (see `serialTcp.log`).
 
 While running, the program does not exit by itself; stop it with Ctrl+C.
 

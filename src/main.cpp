@@ -117,9 +117,18 @@ int main(int argc, char *argv[])
     // parser.showHelp(1);
     exit(0);
   }
-  else if (args.size() < 4) {
-    L_ERROR("Missing command-line arguments (option -h displays help)");
+  else if (args.size() != 4) {
+    L_ERROR(QString("Expected 4 command-line arguments, got %1 (option -h displays help)").arg(args.size()));
     exit(1);
+  }
+
+  if (parser.isSet(optionLocalInput)) {
+    L_WARN("Local input (option -i) is not implemented, ignored");
+  }
+  if (parser.isSet(optionLocalOutput)) {
+    // serial data goes to stdout, keep console logging out of it (log file is still written)
+    L_NOTE("Local output on stdout, console logging disabled (see serialTcp.log)");
+    simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = false;
   }
 
   // Task *task = new Task(...); // problem: children of task are deleted after SimpleQtLogger !!!

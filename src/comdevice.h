@@ -51,7 +51,7 @@ SOFTWARE.
 #if COMDEVICE_ENABLE_TCP > 0
 #include <QTcpServer>
 #include <QTcpSocket>
-#include <QSocketNotifier>
+#include <QHash>
 #endif
 #if COMDEVICE_ENABLE_SCREEN > 0
 #include <QFile>
@@ -135,6 +135,7 @@ class ComDeviceTcp : public ComDevice
     Q_DISABLE_COPY(ComDeviceTcp)
 
     QString peerString(const QTcpSocket* tcpSocket);
+    void dropClient(QTcpSocket* tcpSocket, const QString& reason);
 
   private:
     const QString _localIp;
@@ -143,7 +144,7 @@ class ComDeviceTcp : public ComDevice
 
     QTcpServer* _tcpServer;
     QList<QTcpSocket*> _tcpSocketList;
-    QMap<QString, QString> _dataRecv; // used if Mode::TEXT
+    QHash<QTcpSocket*, QByteArray> _dataRecv; // incomplete line per client, used if Mode::TEXT
 };
 #endif
 
@@ -162,17 +163,11 @@ class ComDeviceScreen : public ComDevice
     virtual void init();
     virtual void slotDataSend(const QByteArray& data);
 
-    void slotReadyRead();
-    void slotActivated(int socket);
-
   private:
     Q_DISABLE_COPY(ComDeviceScreen)
 
   private:
-    QTextStream* _textStreamIn;
-    QTextStream* _textStreamOut;
-    QSocketNotifier* _socketNotifierIn;
-    QFile* _fileIn;
+    QFile* _fileOut;
 };
 #endif
 

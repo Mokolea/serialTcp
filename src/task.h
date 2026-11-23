@@ -55,7 +55,6 @@ private:
   Q_DISABLE_COPY(Task)
 
 private slots:
-  void slotFinished();
   void slotFailed();
 
 private:
@@ -70,8 +69,6 @@ private:
   ComDevice* _comDeviceSerial;
   ComDevice* _comDeviceTcp;
   ComDevice* _comDeviceScreen;
-
-  int _exitCode;
 };
 
 #endif // TASK_H

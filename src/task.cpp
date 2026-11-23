@@ -47,7 +47,6 @@ Task::Task(const QString& serialPortName, const QString& serialBaudRate,
   , _comDeviceSerial(0)
   , _comDeviceTcp(0)
   , _comDeviceScreen(0)
-  , _exitCode(0)
 {
   L_FUNC("");
 }
@@ -67,7 +66,7 @@ void Task::init()
 
   connect(_comDeviceSerial, &ComDevice::finished, this, &Task::slotFailed);
   connect(_comDeviceTcp, &ComDevice::finished, this, &Task::slotFailed);
-  connect(_comDeviceScreen, &ComDevice::finished, this, &Task::slotFinished);
+  connect(_comDeviceScreen, &ComDevice::finished, this, &Task::slotFailed);
 
   connect(_comDeviceSerial, &ComDevice::signalDataRecv, _comDeviceTcp, &ComDevice::slotDataSend);
   connect(_comDeviceTcp, &ComDevice::signalDataRecv, _comDeviceSerial, &ComDevice::slotDataSend);
@@ -83,16 +82,10 @@ void Task::init()
   QTimer::singleShot(0, _comDeviceScreen, SLOT(init()));
 }
 
-void Task::slotFinished()
-{
-  L_FUNC("");
-  emit finished(_exitCode);
-}
-
 void Task::slotFailed()
 {
   L_FUNC("");
-  // serial and TCP devices only finish on failure (open/listen, write, port/accept error)
-  _exitCode = 1;
-  slotFinished();
+  // devices only finish on failure (serial: baud rate, open, write, port error; TCP: address, port, listen, accept error;
+  // screen: stdout open or write error), otherwise the program runs until stopped (Ctrl+C)
+  emit finished(1);
 }

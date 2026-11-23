@@ -32,7 +32,14 @@ SOFTWARE.
 
 #include "comdevice.h"
 #include <simpleQtLogger.h>
-#include <QTimer>
+
+#if COMDEVICE_ENABLE_TCP > 0
+namespace {
+// Limits per TCP client; the server accepts anyone, so a client must not grow memory without bound
+const int TCP_LINE_SIZE_MAX = 64 * 1024;                 // incomplete line (no LF yet), Mode::TEXT
+const qint64 TCP_SEND_BUFFER_SIZE_MAX = 4 * 1024 * 1024; // data not yet sent to a slow client
+}
+#endif
 
 ComDevice::ComDevice(QObject* parent)
   : QObject(parent)
@@ -83,43 +90,36 @@ void ComDeviceSerial::init()
 {
   L_FUNC("");
 
+  bool ok = false;
+  const qint32 baudRate = _serialBaudRate.toInt(&ok);
+  if (!ok || baudRate <= 0) {
+    L_ERROR(QString("Serial port baud rate invalid: %1").arg(_serialBaudRate));
+    emit finished();
+    return;
+  }
+
   _serialPort = new QSerialPort(this);
   _serialPort->setPortName(_serialPortName);
-
-  if (_serialBaudRate == "4800") {
-    _serialPort->setBaudRate(QSerialPort::Baud4800);
-  }
-  else if (_serialBaudRate == "9600") {
-    _serialPort->setBaudRate(QSerialPort::Baud9600);
-  }
-  else if (_serialBaudRate == "19200") {
-    _serialPort->setBaudRate(QSerialPort::Baud19200);
-  }
-  else if (_serialBaudRate == "38400") {
-    _serialPort->setBaudRate(QSerialPort::Baud38400);
-  }
-  else if (_serialBaudRate == "57600") {
-    _serialPort->setBaudRate(QSerialPort::Baud57600);
-  }
-  else {
-    _serialPort->setBaudRate(QSerialPort::Baud115200);
-  }
+  _serialPort->setBaudRate(baudRate);
   _serialPort->setDataBits(QSerialPort::Data8);
   _serialPort->setParity(QSerialPort::NoParity);
   _serialPort->setStopBits(QSerialPort::OneStop);
   _serialPort->setFlowControl(QSerialPort::NoFlowControl);
 
   connect(_serialPort, &QSerialPort::readyRead, this, &ComDeviceSerial::slotReadyRead);
+
+  if (!_serialPort->open(QIODevice::ReadWrite)) {
+    L_ERROR(QString("Serial port open failed: %1").arg(_serialPort->errorString()));
+    emit finished();
+    return;
+  }
+
+  // connect after open, so a failed open is reported once (above), not again by slotError()
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 8, 0))
   connect(_serialPort, &QSerialPort::errorOccurred, this, &ComDeviceSerial::slotError);
 #else
   connect(_serialPort, static_cast<void(QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error), this, &ComDeviceSerial::slotError);
 #endif
-
-  if (!_serialPort->open(QIODevice::ReadWrite)) {
-    L_ERROR("Serial port open failed");
-    emit finished();
-  }
 }
 
 void ComDeviceSerial::slotDataSend(const QByteArray& data)
@@ -157,7 +157,7 @@ void ComDeviceSerial::slotError(QSerialPort::SerialPortError error)
   if (error == QSerialPort::NoError) {
     return;
   }
-  L_WARN(QString("Serial port error: %1").arg(error));
+  L_WARN(QString("Serial port error: %1 (%2)").arg(error).arg(_serialPort ? _serialPort->errorString() : QString()));
   emit finished();
 }
 #endif
@@ -227,15 +227,18 @@ void ComDeviceTcp::slotDataSend(const QByteArray& data)
     return;
   }
 
-  foreach (QTcpSocket* tcpSocket, _tcpSocketList) {
+  // a failing or slow client is dropped, the others keep running
+  const QList<QTcpSocket*> tcpSocketList = _tcpSocketList; // copy, dropClient() modifies the list
+  for (QTcpSocket* tcpSocket : tcpSocketList) {
     qint64 number = tcpSocket->write(data);
     if (number == -1) {
-      L_ERROR("TCP-Socket write failed");
-      emit finished();
+      dropClient(tcpSocket, "write failed");
     }
     else if (number != data.size()) {
-      L_WARN("TCP-Socket write partial data"); // TODO
-      emit finished();
+      dropClient(tcpSocket, "write partial data");
+    }
+    else if (tcpSocket->bytesToWrite() > TCP_SEND_BUFFER_SIZE_MAX) {
+      dropClient(tcpSocket, "not reading, send buffer full");
     }
   }
 }
@@ -261,7 +264,9 @@ void ComDeviceTcp::slotNewConnection()
 
   if (_mode == Mode::BINARY && !_tcpSocketList.isEmpty()) {
     // limit to one connection
-    tcpSocket->disconnectFromHost();
+    L_NOTE(QString("TCP-Socket rejected, binary mode allows one connection: %1").arg(peerString(tcpSocket)));
+    tcpSocket->abort();
+    tcpSocket->deleteLater();
     return;
   }
 
@@ -280,12 +285,7 @@ void ComDeviceTcp::slotDisconnected()
   if (!tcpSocket) {
     return;
   }
-  if (_mode == Mode::TEXT) {
-    QString key = peerString(tcpSocket); // map key
-    if (_dataRecv.remove(key) > 0) {
-      L_DEBUG(QString("key remove: %1").arg(key));
-    }
-  }
+  _dataRecv.remove(tcpSocket);
   _tcpSocketList.removeAll(tcpSocket);
   tcpSocket->deleteLater();
   L_NOTE(QString("TCP-Socket closed: %1 %2").arg(tcpSocket->peerAddress().toString()).arg(tcpSocket->peerPort()));
@@ -303,23 +303,26 @@ void ComDeviceTcp::slotReadyRead()
     emit signalDataRecv(data);
     return;
   }
-  // handle LF in multi-tcp-connection mode (Mode::TEXT)
-  QString key = peerString(tcpSocket); // map key
-  _dataRecv[key] += QString::fromUtf8(data);
-  if (_dataRecv[key].contains("\n")) {
-    const QStringList dataRecvList = _dataRecv[key].split("\n");
-    QStringList dataRecvListTrimmed;
-    for (const QString& dataRecv : dataRecvList) {
-      dataRecvListTrimmed.push_back(dataRecv.trimmed());
+  // Mode::TEXT: forward complete lines only, so lines of several clients do not interleave.
+  // Work on bytes (not QString), so a UTF-8 character split across reads stays intact.
+  QByteArray buffer = _dataRecv.take(tcpSocket) + data;
+  auto index = buffer.indexOf('\n');
+  while (index >= 0) {
+    QByteArray line = buffer.left(index);
+    buffer.remove(0, index + 1);
+    if (line.endsWith('\r')) {
+      line.chop(1); // CRLF -> LF
     }
-    while (dataRecvListTrimmed.size() >= 2) {
-      QString dataRecv = dataRecvListTrimmed.takeFirst();
-      _dataRecv[key] = dataRecvListTrimmed.join("\n");
-      // L_DEBUG(QString("dataRecvListTrimmed.size: %1").arg(dataRecvListTrimmed.size()));
-      QByteArray data = dataRecv.toUtf8();
-      data.append("\n");
-      emit signalDataRecv(data);
-    }
+    line.append('\n');
+    emit signalDataRecv(line);
+    index = buffer.indexOf('\n');
+  }
+  if (buffer.size() > TCP_LINE_SIZE_MAX) {
+    dropClient(tcpSocket, "line too long");
+    return;
+  }
+  if (!buffer.isEmpty()) {
+    _dataRecv.insert(tcpSocket, buffer);
   }
 }
 
@@ -331,6 +334,17 @@ QString ComDeviceTcp::peerString(const QTcpSocket* tcpSocket)
   }
   return QString("%1:%2").arg(tcpSocket->peerAddress().toString()).arg(tcpSocket->peerPort());
 }
+
+void ComDeviceTcp::dropClient(QTcpSocket* tcpSocket, const QString& reason)
+{
+  L_FUNC("");
+  L_WARN(QString("TCP-Socket dropped: %1 (%2)").arg(peerString(tcpSocket)).arg(reason));
+  disconnect(tcpSocket, nullptr, this, nullptr); // no slotDisconnected(), cleanup is done here
+  _dataRecv.remove(tcpSocket);
+  _tcpSocketList.removeAll(tcpSocket);
+  tcpSocket->abort();
+  tcpSocket->deleteLater();
+}
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -338,10 +352,7 @@ QString ComDeviceTcp::peerString(const QTcpSocket* tcpSocket)
 #if COMDEVICE_ENABLE_SCREEN > 0
 ComDeviceScreen::ComDeviceScreen(QObject* parent)
   : ComDevice(parent)
-  , _textStreamIn(0)
-  , _textStreamOut(0)
-  , _socketNotifierIn(0)
-  , _fileIn(0)
+  , _fileOut(0)
 {
   L_FUNC("");
 }
@@ -349,119 +360,31 @@ ComDeviceScreen::ComDeviceScreen(QObject* parent)
 ComDeviceScreen::~ComDeviceScreen()
 {
   L_FUNC("");
-  if (_fileIn) {
-    delete _fileIn;
-  }
-  if (_socketNotifierIn) {
-    delete _socketNotifierIn;
-  }
-  if (_textStreamOut) {
-    delete _textStreamOut;
-  }
-  if (_textStreamIn) {
-    delete _textStreamIn;
-  }
 }
 
 void ComDeviceScreen::init()
 {
   L_FUNC("");
+  // local input (stdin) is not implemented
 
-  // TODO implement this - remove experiments
-
-  //_textStreamIn = new QTextStream(stdin);
-  _textStreamOut = new QTextStream(stdout);
-
-  //_socketNotifierIn = new QSocketNotifier(0 /*stdin*/, QSocketNotifier::Read);
-
-  //connect(_socketNotifierIn, &QSocketNotifier::activated, this, &ComDeviceScreen::slotActivated);
-
-  //_fileIn = new QFile;
-  //_fileIn->open(stdin, QIODevice::ReadOnly);
-
-  //connect(_fileIn, &QIODevice::readyRead, this, &ComDeviceScreen::slotReadyRead);
-
-  //QIODevice* ioDeviceIn = _textStreamIn->device();
-  //if (!ioDeviceIn) {
-  //  L_WARN("QIODevice error");
-  //  emit finished();
-  //}
-
-  //connect(ioDeviceIn, &QIODevice::readyRead, this, &ComDeviceScreen::slotReadyRead);
-
-  //QTimer::singleShot(10, this, SLOT(slotReadyRead()));
+  // raw bytes, no text conversion: serial data may be binary or split inside a UTF-8 character
+  _fileOut = new QFile(this);
+  if (!_fileOut->open(stdout, QIODevice::WriteOnly | QIODevice::Unbuffered)) {
+    L_ERROR(QString("Local output open failed: %1").arg(_fileOut->errorString()));
+    emit finished();
+  }
 }
 
 void ComDeviceScreen::slotDataSend(const QByteArray& data)
 {
   // L_FUNC("");
-  if (!_textStreamOut) {
+  if (!_fileOut || !_fileOut->isOpen()) {
     return;
   }
 
-  _textStreamOut->operator<<(data);
-  _textStreamOut->flush();
-}
-
-void ComDeviceScreen::slotReadyRead()
-{
-  L_FUNC("");
-  //if (!_fileIn) {
-  //  return;
-  //}
-
-  //if (_fileIn->bytesAvailable()) {
-
-  //QByteArray data = _fileIn->readAll();
-
-  //QByteArray data = _fileIn->readLine();
-  //if (data.size()) {
-  //  emit signalDataRecv(data);
-  //}
-
-  //}
-
-  //QIODevice* ioDeviceIn = _textStreamIn->device();
-  //if (!ioDeviceIn) {
-  //  L_WARN("QIODevice error");
-  //  emit finished();
-  //}
-
-  //if (_textStreamIn->atEnd()) {
-  //  return;
-  //}
-
-  //QByteArray data = ioDeviceIn->readAll();
-
-  //qint64 number = ioDeviceIn->bytesAvailable();
-  //if (number) {
-  //  QByteArray data = ioDeviceIn->read(number);
-  //  emit signalDataRecv(data);
-  //}
-  //if (data.size()) {
-  //  emit signalDataRecv(data);
-  //}
-
-  //QTimer::singleShot(10, this, SLOT(slotReadyRead()));
-}
-
-void ComDeviceScreen::slotActivated(int socket)
-{
-  L_FUNC("");
-  //if (!_textStreamIn) {
-  //  return;
-  //}
-
-  Q_UNUSED(socket);
-
-  //QIODevice* ioDeviceIn = _textStreamIn->device();
-  //if (!ioDeviceIn) {
-  //  L_WARN("QIODevice error");
-  //  emit finished();
-  //}
-
-  //QByteArray data = ioDeviceIn->readAll();
-  //QByteArray data = QByteArray::fromStdString(_textStreamIn->readLine().toStdString());
-  //emit signalDataRecv(data);
+  if (_fileOut->write(data) != data.size() || !_fileOut->flush()) {
+    L_ERROR("Local output write failed");
+    emit finished();
+  }
 }
 #endif
