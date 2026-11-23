@@ -31,7 +31,7 @@ All code is in `src/`:
   - `ComDeviceSerial`: `QSerialPort`, fixed 8N1, no flow control. Baud rate is chosen by string compare against a fixed list; any unrecognized value falls back to 115200.
   - `ComDeviceTcp`: `QTcpServer` plus a list of client sockets; outgoing data is broadcast to all clients. Two modes: `TEXT` (default; multiple clients, per-peer buffer in `_dataRecv`, forwards only complete `\n`-terminated lines) and `BINARY` (`-m`; raw pass-through, and only one client is accepted at a time).
   - `ComDeviceScreen`: local stdout output (`-o`). Local input (`-i`) is not implemented; its stdin code is commented out.
-- `task.cpp`: `Task::init()` creates the three devices, wires `signalDataRecv` of one device to `slotDataSend` of another (serial↔TCP always; serial→screen if `-o`; screen→serial if `-i`), and connects every `finished()` to quit the app. Any device emitting `finished()` (e.g. open/listen failure) terminates the whole program.
+- `task.cpp`: `Task::init()` creates the three devices, wires `signalDataRecv` of one device to `slotDataSend` of another (serial↔TCP always; serial→screen if `-o`; screen→serial if `-i`), and connects every device's `finished()` to `Task::finished(int exitCode)`, which `main.cpp` connects to `QCoreApplication::exit`. Serial and TCP devices only emit `finished()` on failure (open/listen, write, port/accept error), so they route through `Task::slotFailed()` and exit with code 1; the screen device exits with 0. Any device finishing terminates the whole program. Exit codes are documented in `README.md`; keep them in sync.
 
 To add a new endpoint type, subclass `ComDevice` and wire it in `Task::init()`.
 
