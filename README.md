@@ -32,7 +32,8 @@ Open serial port and connect to all active TCP streams.
 (https://github.com/Mokolea/serialTcp)
 
 Options:
-  -h, --help               Displays this help.
+  -h, --help               Displays help on commandline options.
+  --help-all               Displays help, including generic Qt options.
   -v, --version            Displays version information.
   -l, --list-serial-ports  List all currently available serial ports.
   -i, --local-input        Activate local input. (not implemented)
