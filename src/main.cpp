@@ -46,7 +46,8 @@ int main(int argc, char *argv[])
   QCoreApplication::setApplicationName(TOOL_NAME);
   QCoreApplication::setApplicationVersion(TOOL_VERSION);
 
-  Q_ASSERT_X(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 3), "main", "SimpleQtLogger version");
+  // checked at compile time, Q_ASSERT would be compiled out in release builds
+  static_assert(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 3), "SimpleQtLogger version 1.3.3 or newer required");
 
   // enable sinks
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
