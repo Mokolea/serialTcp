@@ -73,6 +73,14 @@ With `-o`, serial data is written to stdout unchanged and console logging is tur
 
 While running, the program does not exit by itself; stop it with Ctrl+C.
 
+## Unit tests
+Qt Test based, no serial hardware needed (TCP tests use the loopback interface):
+```
+$ cd tests/TestSerialTcpUnit
+$ qmake && make
+$ ./TestSerialTcpUnit
+```
+
 ## Example (using Linux)
 Scenario 1: remote access logging information from a device (like Arduino, ...) attached to a serial port of Host A:
  - Host A with serial port `/dev/ttyS0` (or `/dev/ttyUSB0`, ...) and IP address `192.168.1.100`

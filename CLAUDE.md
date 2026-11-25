@@ -20,7 +20,15 @@ qmake && make                    # in-source; Makefile, binary and objects are g
 ./serialTcp ttyUSB0 115200 any 65432    # then connect with: nc <host> 65432
 ```
 
-There are no tests. The old Travis CI (`.travis.yml`, Qt 5) only built and ran `-h`, `-v`, `-l` as a smoke test; do the same to check a change. The app writes `serialTcp.log` (rolling, via SimpleQtLogger) in the working directory.
+Unit tests (Qt Test, separate qmake project, no serial hardware needed) are in `tests/TestSerialTcpUnit/`; run them after a change:
+
+```sh
+cd tests/TestSerialTcpUnit && qmake && make && ./TestSerialTcpUnit
+```
+
+They compile `src/comdevice.cpp`, `src/task.cpp` and SimpleQtLogger directly, create no logger instance (so no log output), and cover `ComDeviceSerial`/`Task` failure paths (baud rate, open), `ComDeviceTcp` over loopback on a free port (text-mode line handling, line and send-buffer limits, broadcast, binary single client) and `ComDeviceScreen` (stdout redirected via `dup2`). The TCP limits are duplicated at the top of `tst_serialTcp.cpp`; keep them in sync with `comdevice.cpp`. Successful serial I/O is not tested.
+
+Also smoke-test the app as the old Travis CI (`.travis.yml`, Qt 5) did: build and run `-h`, `-v`, `-l`. The app writes `serialTcp.log` (rolling, via SimpleQtLogger) in the working directory.
 
 ## Architecture
 
