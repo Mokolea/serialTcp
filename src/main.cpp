@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   QCoreApplication::setApplicationVersion(TOOL_VERSION);
 
   // checked at compile time, Q_ASSERT would be compiled out in release builds
-  static_assert(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 3, 3), "SimpleQtLogger version 1.3.3 or newer required");
+  static_assert(SQTL_VERSION >= SQTL_VERSION_CHECK(1, 4, 0), "SimpleQtLogger version 1.4.0 or newer required");
 
   // enable sinks
   simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
   enableLogLevels_console.logLevel_FUNCTION = false;
 
   // initialize SimpleQtLogger (step 1/2)
-  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat_file("<TS> [<TID32>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<TID32>] [<LL>] <TEXT>");
+  simpleqtlogger::SimpleQtLogger::createInstance(qApp)->setLogFormat_file("<TS> [<TID>] [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<TID>] [<LL>] <TEXT>");
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_file(enableLogLevels_file);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogFileName("serialTcp.log", 10 * 1000 * 1000, 10);
   simpleqtlogger::SimpleQtLogger::getInstance()->setLogLevels_console(enableLogLevels_console);
