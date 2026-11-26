@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-serialTcp is a small Qt console app (Qt 6, previously Qt 5) that opens a serial port and bridges it bidirectionally to every connected TCP client of a listening TCP server. No auth or access restrictions on incoming connections, by design.
+serialTcp is a small Qt console app (builds with Qt 5 and Qt 6; keep both working) that opens a serial port and bridges it bidirectionally to every connected TCP client of a listening TCP server. No auth or access restrictions on incoming connections, by design.
 
 `SimpleQtLogger/` is a git submodule (`../SimpleQtLogger.git`, relative URL) compiled directly into the app. It has its own `CLAUDE.md`; treat it as a separate repo and commit changes there, not here. `main.cpp` requires a minimum `SQTL_VERSION` (1.4.0) with a `static_assert`, so an older submodule fails the build.
 
@@ -24,6 +24,8 @@ Unit tests (Qt Test, separate qmake project, no serial hardware needed) are in `
 
 ```sh
 cd tests/TestSerialTcpUnit && qmake && make && ./TestSerialTcpUnit
+./TestSerialTcpUnit textCrlf            # single test function (-functions lists them)
+./TestSerialTcpUnit "tcpPortInvalid:<tag>"   # single data row of a data-driven test
 ```
 
 They compile `src/comdevice.cpp`, `src/task.cpp` and SimpleQtLogger directly, create no logger instance (so no log output), and cover `ComDeviceSerial`/`Task` failure paths (baud rate, open), `ComDeviceTcp` over loopback on a free port (text-mode line handling, line and send-buffer limits, broadcast, binary single client) and `ComDeviceScreen` (stdout redirected via `dup2`). The TCP limits are duplicated at the top of `tst_serialTcp.cpp`; keep them in sync with `comdevice.cpp`. Successful serial I/O is not tested.
