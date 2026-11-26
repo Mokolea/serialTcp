@@ -38,7 +38,7 @@ SOFTWARE.
 #include "task.h"
 
 #define TOOL_NAME "Serial-TCP"
-#define TOOL_VERSION "v1.2"
+#define TOOL_VERSION "v1.3"
 
 int main(int argc, char *argv[])
 {
