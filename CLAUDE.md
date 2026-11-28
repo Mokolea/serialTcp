@@ -20,6 +20,8 @@ qmake && make                    # in-source; Makefile, binary and objects are g
 ./serialTcp ttyUSB0 115200 any 65432    # then connect with: nc <host> 65432
 ```
 
+Once running, the app never exits by itself (only on failure or Ctrl+C), so run it with `timeout` or in the background.
+
 Unit tests (Qt Test, separate qmake project, no serial hardware needed) are in `tests/TestSerialTcpUnit/`; run them after a change:
 
 ```sh
@@ -28,9 +30,9 @@ cd tests/TestSerialTcpUnit && qmake && make && ./TestSerialTcpUnit
 ./TestSerialTcpUnit "tcpPortInvalid:<tag>"   # single data row of a data-driven test
 ```
 
-They compile `src/comdevice.cpp`, `src/task.cpp` and SimpleQtLogger directly, create no logger instance (so no log output), and cover `ComDeviceSerial`/`Task` failure paths (baud rate, open), `ComDeviceTcp` over loopback on a free port (text-mode line handling, line and send-buffer limits, broadcast, binary single client) and `ComDeviceScreen` (stdout redirected via `dup2`). The TCP limits are duplicated at the top of `tst_serialTcp.cpp` and in `README.md`; keep them in sync with `comdevice.cpp`. Successful serial I/O is not tested.
+The test project adds `-Wextra` to debug builds (the app does not), so check its build for new warnings. They compile `src/comdevice.cpp`, `src/task.cpp` and SimpleQtLogger directly, create no logger instance (so no log output), and cover `ComDeviceSerial`/`Task` failure paths (baud rate, open), `ComDeviceTcp` over loopback on a free port (text-mode line handling, line and send-buffer limits, broadcast, binary single client) and `ComDeviceScreen` (stdout redirected via `dup2`). The TCP limits are duplicated at the top of `tst_serialTcp.cpp` and in `README.md`; keep them in sync with `comdevice.cpp`. Successful serial I/O is not tested.
 
-Also smoke-test the app as the old Travis CI (`.travis.yml`, Qt 5) did: build and run `-h`, `-v`, `-l`. The app writes `serialTcp.log` (rolling, via SimpleQtLogger) in the working directory.
+Also smoke-test the app as the old Travis CI (`.travis.yml`, Qt 5) did: build and run `-h`, `-v`, `-l`. The app writes `serialTcp.log` (rolling via SimpleQtLogger: 10 MiB per file, 10 files, set in `main.cpp`) in the working directory.
 
 ## Architecture
 
