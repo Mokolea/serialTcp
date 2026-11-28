@@ -28,7 +28,7 @@ cd tests/TestSerialTcpUnit && qmake && make && ./TestSerialTcpUnit
 ./TestSerialTcpUnit "tcpPortInvalid:<tag>"   # single data row of a data-driven test
 ```
 
-They compile `src/comdevice.cpp`, `src/task.cpp` and SimpleQtLogger directly, create no logger instance (so no log output), and cover `ComDeviceSerial`/`Task` failure paths (baud rate, open), `ComDeviceTcp` over loopback on a free port (text-mode line handling, line and send-buffer limits, broadcast, binary single client) and `ComDeviceScreen` (stdout redirected via `dup2`). The TCP limits are duplicated at the top of `tst_serialTcp.cpp`; keep them in sync with `comdevice.cpp`. Successful serial I/O is not tested.
+They compile `src/comdevice.cpp`, `src/task.cpp` and SimpleQtLogger directly, create no logger instance (so no log output), and cover `ComDeviceSerial`/`Task` failure paths (baud rate, open), `ComDeviceTcp` over loopback on a free port (text-mode line handling, line and send-buffer limits, broadcast, binary single client) and `ComDeviceScreen` (stdout redirected via `dup2`). The TCP limits are duplicated at the top of `tst_serialTcp.cpp` and in `README.md`; keep them in sync with `comdevice.cpp`. Successful serial I/O is not tested.
 
 Also smoke-test the app as the old Travis CI (`.travis.yml`, Qt 5) did: build and run `-h`, `-v`, `-l`. The app writes `serialTcp.log` (rolling, via SimpleQtLogger) in the working directory.
 
@@ -51,3 +51,4 @@ To add a new endpoint type, subclass `ComDevice` and wire it in `Task::init()`.
 - 2-space indentation in `main.cpp`/`task.cpp`; `comdevice.*` indents class bodies by 4 with access specifiers at 2. Match the surrounding file.
 - Each source file starts with the MIT license header block.
 - Keep the usage text in `README.md` in sync with the CLI options in `main.cpp`.
+- A version bump changes only `TOOL_VERSION` in `main.cpp`, in a commit of its own titled `Version vX.Y`.
